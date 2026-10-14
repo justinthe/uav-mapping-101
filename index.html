@@ -9,20 +9,17 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f3f5f7;--panel:#fff;--ink:#17202b;--muted:#5d6876;--line:#d9e0e7;--grid:#e8edf2;--accent:#0b63c5;--accent-soft:rgba(11,99,197,.08);--ok:#1b7f3b;--warn:#965a00;--bad:#c42b2b;--site:#b9c4cf}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0e1319;--panel:#151c24;--ink:#e3e9ef;--muted:#8d99a6;--line:#27313d;--grid:#1b242e;--accent:#4ea1ff;--accent-soft:rgba(78,161,255,.1);--ok:#4cc27a;--warn:#e0a03a;--bad:#ff6b6b;--site:#3d4957}}
-:root[data-theme=dark]{--bg:#0e1319;--panel:#151c24;--ink:#e3e9ef;--muted:#8d99a6;--line:#27313d;--grid:#1b242e;--accent:#4ea1ff;--accent-soft:rgba(78,161,255,.1);--ok:#4cc27a;--warn:#e0a03a;--bad:#ff6b6b;--site:#3d4957}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1319;--panel:#151c24;--ink:#e3e9ef;--muted:#8d99a6;--line:#27313d;--grid:#1b242e;--accent:#4ea1ff;--accent-soft:rgba(78,161,255,.1);--ok:#4cc27a;--warn:#e0a03a;--bad:#ff6b6b;--site:#3d4957}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 "IBM Plex Sans",system-ui,sans-serif}
 .mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;background:var(--panel);border-bottom:1px solid var(--line)}
 h1{font-size:17px;margin:0;font-weight:600}
 .sub{margin:0;color:var(--muted);font-size:13px}
-.proto{font:500 11px "IBM Plex Mono",monospace;color:var(--warn);border:1px solid currentColor;padding:2px 6px;border-radius:3px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
 .steps{display:flex;gap:6px;overflow-x:auto;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--line)}
 .pill{flex:none;font:inherit;font-size:13px;color:var(--ink);background:none;border:1px solid var(--line);border-radius:4px;padding:5px 10px;cursor:pointer}
 .pill .n{font-family:"IBM Plex Mono",monospace;color:var(--muted);margin-right:4px}
 .pill[aria-current=step]{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
-.pill:disabled{opacity:.4;cursor:not-allowed}
 .wrap{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:20px;max-width:1280px;margin:0 auto;padding:20px 16px}
 .eyebrow{font:500 11px "IBM Plex Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 6px}
 h2{font-size:24px;line-height:1.2;margin:0 0 12px;font-weight:600}
@@ -46,18 +43,20 @@ button.ro:hover{background:var(--accent-soft)}
 .take{border-left:3px solid var(--accent);padding:8px 12px;background:var(--accent-soft);font-size:14px;margin-top:16px}
 .stagebox{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px;align-self:start;position:sticky;top:12px}
 canvas{display:block;width:100%;aspect-ratio:8/5}
+canvas[hidden]{display:none}
 canvas.drag{touch-action:none;cursor:crosshair}
 .caption{margin:8px 2px 0;font-size:13px;color:var(--muted)}
 .btns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
 .b{font:inherit;font-size:13px;padding:6px 12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:4px;cursor:pointer}
 .b:hover:not(:disabled){border-color:var(--accent)}
 .b:disabled{opacity:.4;cursor:default}
+.b[aria-pressed=true]{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
 .b.primary{background:var(--accent);border-color:var(--accent);color:#fff}
 .switch{display:inline-flex;align-items:center;gap:10px;font:inherit;font-size:14px;background:none;border:0;color:var(--ink);cursor:pointer;padding:4px 0}
-.switch span{width:38px;height:22px;border-radius:11px;background:var(--line);position:relative;transition:background .2s}
-.switch span::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:var(--panel);transition:left .2s}
-.switch[aria-checked=true] span{background:var(--accent)}
-.switch[aria-checked=true] span::after{left:19px}
+.switch>span:first-child{width:38px;height:22px;border-radius:11px;background:var(--line);position:relative;transition:background .2s}
+.switch>span:first-child::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:var(--panel);transition:left .2s}
+.switch[aria-checked=true]>span:first-child{background:var(--accent)}
+.switch[aria-checked=true]>span:first-child::after{left:19px}
 .term{border-bottom:1px dotted var(--accent);cursor:help;position:relative}
 .term:hover::after,.term:focus::after{content:attr(data-def);position:absolute;left:0;top:1.7em;width:max-content;max-width:min(260px,70vw);background:var(--ink);color:var(--bg);font-size:13px;line-height:1.4;font-weight:400;padding:8px 10px;border-radius:4px;z-index:5}
 .pager{display:flex;justify-content:space-between;align-items:center;gap:12px;max-width:1280px;margin:0 auto;padding:0 16px 24px}
@@ -69,13 +68,13 @@ canvas.drag{touch-action:none;cursor:crosshair}
 <body>
 <header class="top">
   <div><h1>UAV Mapping 101</h1><p class="sub">How a drone turns photos into an accurate map</p></div>
-  <span class="proto">Prototype · 4 of 10 topics</span>
 </header>
 <nav class="steps" id="steps" aria-label="Topics"></nav>
 <main class="wrap">
   <section class="text" id="text"></section>
   <section class="stagebox">
     <canvas id="cv" role="img"></canvas>
+    <canvas id="cv3" role="img" hidden></canvas>
     <p class="caption" id="caption"></p>
   </section>
 </main>
@@ -86,15 +85,46 @@ canvas.drag{touch-action:none;cursor:crosshair}
 </footer>
 <script>
 const $ = s => document.querySelector(s);
-const cv = $('#cv'), ctx = cv.getContext('2d');
+const cv = $('#cv'), cv3 = $('#cv3'), ctx = cv.getContext('2d');
 const W = 800, H = 500;                       // logical canvas size
 const OX = 80, OY = 50, MS = 1.6;             // site map: offset + px per meter
 const SITE = { w: 400, h: 250 };              // site size, meters
-const CAM = { sw: 13.2, f: 8.8, iw: 5472, ih: 3648 }; // 1" sensor, 8.8 mm lens (Phantom 4 RTK class)
+// rgb: 1" sensor, 8.8 mm lens (Phantom 4 RTK class). multi ~ MicaSense-class 5-band. lidar ~ Zenmuse L1-class (fov deg, pulses/s).
+const SENS = {
+  rgb:   { name: 'RGB camera', sw: 13.2, f: 8.8, iw: 5472, ih: 3648 },
+  multi: { name: 'Multispectral camera', sw: 4.8, f: 5.5, iw: 1456, ih: 1088 },
+  lidar: { name: 'LiDAR scanner', fov: 70, rate: 240000 }
+};
+// endur = usable mission minutes per battery (20% reserve already taken off)
+const DRONES = {
+  quad:  { name: 'Multirotor', speed: 12, turn: 8, minInt: 2, endur: { rgb: 22, multi: 20, lidar: 18 } },
+  fixed: { name: 'Fixed-wing', speed: 16, turn: 12, minInt: 1, R: 60, endur: { rgb: 55, multi: 50 } } // no lidar
+};
+const SCN = {
+  site: { name: 'Construction site', label: 'CONSTRUCTION SITE', need: .05, best: 'rgb', q: 'How much soil has been dug out, and how much gravel is left in the piles?', who: 'Site engineer' },
+  farm: { name: 'Farm field', label: 'FARM FIELD', need: .30, best: 'multi', q: 'Which parts of the crop are struggling, and where does water pool after rain?', who: 'Farmer' },
+  town: { name: 'Town block', label: 'TOWN BLOCK', need: .10, best: 'lidar', q: 'How tall are the buildings, and which streets would flood first?', who: 'Town planner' }
+};
+// site meters. road = bezier [p0,c1,c2,p1]; bldg [x,y,w,h,ht]; tree/pile [x,y,r,ht]; pit [x,y,w,h,depth]; low [x,y,r,depth]; rows [y0,y1,step]; stress [x,y,rx,ry]
+const FEAT = {
+  town: { road: [[-20, 178], [120, 205], [260, 105], [420, 125]],
+    bldg: [[40, 30, 50, 35, 12], [105, 40, 30, 45, 14.2], [300, 178, 60, 40, 9], [225, 185, 45, 30, 6]],
+    tree: [[250, 60, 18, 11], [290, 74, 12, 8], [160, 115, 14, 9]], low: [[200, 190, 25, .6]],
+    notes: [[118, 62, 'buildings', 30], [250, 60, 'trees', 34], [150, 195, 'street']] },
+  site: { road: [[-20, 40], [100, 60], [200, 20], [420, 50]],
+    bldg: [[20, 190, 30, 12, 3], [55, 190, 30, 12, 3]], pile: [[250, 70, 20, 8], [310, 80, 14, 5]],
+    pit: [[120, 110, 80, 50, 3]], tree: [[380, 220, 10, 7]],
+    notes: [[260, 75, 'stockpiles'], [160, 135, 'excavation'], [100, 50, 'haul road']] },
+  farm: { road: [[-20, 235], [150, 238], [300, 232], [420, 236]],
+    bldg: [[350, 20, 35, 22, 7]], tree: [[20, 15, 8, 10], [40, 12, 9, 10], [60, 16, 8, 10]],
+    rows: [30, 220, 8], low: [[90, 180, 30, .22]], stress: [260, 120, 90, 60],
+    notes: [[200, 120, 'crop rows'], [90, 180, 'wet corner', 54], [200, 218, 'farm track']] }
+};
 const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // Every viewer choice lives here, so later topics react to earlier ones.
-const S = { alt: 100, overlap: 75, rtk: false, gcps: [], amp: 2.5, trail: [], lastTrail: 0, shown: null, err: null };
+const S = { alt: 100, overlap: 75, rtk: false, gcps: [], amp: 2.5, trail: [], lastTrail: 0, shown: null, err: null,
+  scenario: 'site', uav: 'quad', sensor: 'rgb', wind: 3, view: 'cloud', ana: 0, note: null };
 
 const G = {
   gsd: 'Ground Sampling Distance: how much ground one pixel covers. 2 cm/px means each pixel is a 2 × 2 cm patch. Smaller = sharper.',
@@ -104,7 +134,27 @@ const G = {
   gcp: 'Ground Control Point: a marked target on the ground whose coordinates a surveyor measured precisely.',
   bm: 'Benchmark: a permanent survey marker (often a concrete pillar) with officially known coordinates and height.',
   icp: 'Checkpoints: surveyed targets left OUT of processing, used only to test how accurate the finished map is.',
-  rmse: 'Root Mean Square Error: roughly the "typical" error across all checkpoints. Smaller is better.'
+  rmse: 'Root Mean Square Error: roughly the "typical" error across all checkpoints. Smaller is better.',
+  uav: 'Unmanned Aerial Vehicle: the official name for a drone.',
+  multirotor: 'A drone with four or more propellers. It hovers and turns on the spot, but a battery lasts only 20–40 minutes.',
+  fixedwing: 'A drone with wings, like a small plane. It flies longer and faster, but can\'t hover and needs wide turns.',
+  vtol: 'Vertical Take-Off and Landing: a fixed-wing that lifts off like a helicopter, then flies like a plane.',
+  rgb: 'A normal color camera. It records red, green and blue light, like your phone.',
+  multispectral: 'A camera that records several narrow bands of light, including near-infrared, which our eyes can\'t see.',
+  ndvi: 'Normalized Difference Vegetation Index: a plant-health score from red and near-infrared light. Healthy leaves score high.',
+  lidar: 'Light Detection And Ranging: a laser scanner that measures distance by timing how long each pulse takes to bounce back.',
+  imu: 'Inertial Measurement Unit: motion sensors that track the drone\'s tilt and turn hundreds of times a second.',
+  ppk: 'Post-Processed Kinematic: like RTK, but the corrections are applied after the flight instead of live.',
+  gcs: 'Ground Control Station: the controller or tablet app the pilot uses to plan, upload and watch a flight.',
+  waypoint: 'A point in the sky (position + height) the drone flies to. A mapping mission is a list of them.',
+  telemetry: 'Live data the drone radios down: position, height, speed, battery and more.',
+  rth: 'Return-to-Home: the drone flies back to its takeoff point by itself, e.g. when the battery is low or the radio link is lost.',
+  photogrammetry: 'Measuring from photos. Overlapping photos taken from different spots let software compute 3D shape.',
+  tie: 'Tie points: the same small detail recognized in several photos. They "tie" the photos together.',
+  pointcloud: 'A 3D model made of millions of separate dots, each with a position and often a color.',
+  dsm: 'Digital Surface Model: a height map including roofs and treetops. A DTM is the same with buildings and trees removed: bare ground.',
+  ortho: 'Orthomosaic: stitched photos corrected so every spot is seen straight from above. You can measure on it like a map.',
+  swath: 'The strip of ground a LiDAR scans in one pass.'
 };
 const term = (k, label) => `<span class="term" data-t="${k}">${label}</span>`;
 const ro = (id, label) => `<div class="ro"><span>${label}</span><b id="${id}">–</b></div>`;
@@ -131,16 +181,33 @@ function drawGrid(step, ox, oy) {
   ctx.stroke();
 }
 function drawSite() {
+  const F = FEAT[S.scenario], m = (x, y, w, h) => [...px(x, y), w * MS, h * MS];
   ctx.lineCap = 'round'; ctx.strokeStyle = C.site; ctx.lineWidth = 10 * MS; ctx.globalAlpha = .7;
-  ctx.beginPath(); ctx.moveTo(...px(-20, 178)); ctx.bezierCurveTo(...px(120, 205), ...px(260, 105), ...px(420, 125)); ctx.stroke();
+  const [p0, c1, c2, p1] = F.road.map(p => px(...p));
+  ctx.beginPath(); ctx.moveTo(...p0); ctx.bezierCurveTo(...c1, ...c2, ...p1); ctx.stroke();
+  if (F.rows) { ctx.lineWidth = 1; ctx.globalAlpha = .35; for (let y = F.rows[0]; y <= F.rows[1]; y += F.rows[2]) line(...px(0, y), ...px(SITE.w, y)); ctx.globalAlpha = .7; }
   ctx.fillStyle = C.site;
-  for (const [x, y, w, h] of [[40, 30, 50, 35], [105, 40, 30, 45], [300, 178, 60, 40], [225, 185, 45, 30]]) ctx.fillRect(...px(x, y), w * MS, h * MS);
-  for (const [x, y, r] of [[250, 60, 18], [290, 74, 12], [160, 115, 14]]) { ctx.beginPath(); ctx.arc(...px(x, y), r * MS, 0, 7); ctx.fill(); }
+  for (const [x, y, w, h] of F.bldg) ctx.fillRect(...m(x, y, w, h));
+  for (const [x, y, r] of [...F.tree || [], ...F.pile || []]) { ctx.beginPath(); ctx.arc(...px(x, y), r * MS, 0, 7); ctx.fill(); }
+  ctx.strokeStyle = C.muted; ctx.lineWidth = 1;
+  for (const [x, y, r] of F.pile || []) { ctx.beginPath(); ctx.arc(...px(x, y), r * MS / 2, 0, 7); ctx.stroke(); }
   ctx.globalAlpha = 1; ctx.lineCap = 'butt';
-  ctx.strokeStyle = C.muted; ctx.lineWidth = 1; ctx.setLineDash([6, 4]);
+  ctx.setLineDash([6, 4]);
+  for (const [x, y, w, h] of F.pit || []) {
+    const [a, b, pw, ph] = m(x, y, w, h);
+    ctx.strokeRect(a, b, pw, ph); ctx.save(); ctx.beginPath(); ctx.rect(a, b, pw, ph); ctx.clip();
+    ctx.setLineDash([]); ctx.globalAlpha = .4; for (let k = -ph; k < pw; k += 8) line(a + k, b + ph, a + k + ph, b); ctx.restore();
+  }
+  if (S.scenario !== 'town') for (const [x, y, r] of F.low || []) { ctx.beginPath(); ctx.arc(...px(x, y), r * MS, 0, 7); ctx.stroke(); } // town's low spot is for Analysis only
   ctx.strokeRect(OX, OY, SITE.w * MS, SITE.h * MS); ctx.setLineDash([]);
-  txt('SITE 400 × 250 m', OX, OY - 8);
+  siteLabel();
 }
+function lbl(s, x, y, o = {}) {                                // text on a small backing rect so overlays can't hide it
+  const z = o.size || 11; ctx.font = `${o.weight || 400} ${z}px "IBM Plex Mono",monospace`;
+  const w = ctx.measureText(s).width, x0 = o.align === 'center' ? x - w / 2 : x;
+  ctx.fillStyle = C.panel; ctx.globalAlpha = .9; ctx.fillRect(x0 - 3, y - z - 1, w + 6, z + 6); ctx.globalAlpha = 1; txt(s, x, y, o);
+}
+const siteLabel = () => lbl(`${SCN[S.scenario].label} · 400 × 250 m`, OX, OY + SITE.h * MS + 16);
 function drone(x, y) {
   ctx.strokeStyle = C.ink; ctx.lineWidth = 2;
   line(x - 7, y - 7, x + 7, y + 7); line(x - 7, y + 7, x + 7, y - 7);
@@ -148,6 +215,11 @@ function drone(x, y) {
   for (const [dx, dy] of [[-7, -7], [7, -7], [-7, 7], [7, 7]]) { ctx.beginPath(); ctx.arc(x + dx, y + dy, 4, 0, 7); ctx.stroke(); }
   ctx.fillStyle = C.ink; ctx.fillRect(x - 3, y - 3, 6, 6);
 }
+function plane(x, y, a) {
+  ctx.save(); ctx.translate(x, y); ctx.rotate(a); ctx.strokeStyle = ctx.fillStyle = C.ink;
+  ctx.lineWidth = 3; line(-9, 0, 9, 0); ctx.lineWidth = 2; line(2, -13, 2, 13); ctx.lineWidth = 1.5; line(-9, -5, -9, 5); ctx.restore();
+}
+const craft = (x, y, a = 0) => S.uav === 'fixed' ? plane(x, y, a) : drone(x, y);
 function arrow(x, y, len, ang, col) {
   const ex = x + Math.cos(ang) * len, ey = y + Math.sin(ang) * len;
   ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = 1.5; line(x, y, ex, ey);
@@ -158,22 +230,41 @@ function arrow(x, y, len, ang, col) {
 
 /* ---------- flight plan math ---------- */
 let fCache = {};
-function flight() {
-  const key = S.alt + '/' + S.overlap;
-  if (fCache.key === key) return fCache;
-  const ov = S.overlap / 100;
-  const gsd = CAM.sw * S.alt * 100 / (CAM.f * CAM.iw);       // cm per pixel
-  const fw = gsd * CAM.iw / 100, fh = gsd * CAM.ih / 100;     // footprint across / along track, m
-  const sp = fw * (1 - ov), st = fh * (1 - ov);               // line spacing, photo spacing
+function flight(o = S) {
+  const key = o.alt + '/' + o.overlap + '/' + o.uav + '/' + o.sensor;
+  if (o === S && fCache.key === key) return fCache;
+  const ov = o.overlap / 100, d = DRONES[o.uav], lid = o.sensor === 'lidar';
+  let gsd, fw, fh, sp, st, speed, dens, tooFast = false, res;
+  if (lid) {                                                  // continuous strip: 10 m slices just for the animation
+    fw = 2 * o.alt * Math.tan(35 * Math.PI / 180); fh = st = 10; sp = fw * (1 - ov); speed = 10;
+    dens = SENS.lidar.rate / (speed * sp); res = Math.max(.03, .5 / Math.sqrt(dens));
+  } else {
+    const c = SENS[o.sensor];
+    gsd = c.sw * o.alt * 100 / (c.f * c.iw);                  // cm per pixel
+    fw = gsd * c.iw / 100; fh = gsd * c.ih / 100;             // footprint across / along track, m
+    sp = fw * (1 - ov); st = fh * (1 - ov);                   // line spacing, photo spacing
+    speed = o.uav === 'fixed' ? d.speed : Math.min(d.speed, st / d.minInt); // quad: camera can't fire faster than every minInt s
+    tooFast = o.uav === 'fixed' && st / speed < d.minInt; res = 1.5 * gsd / 100;
+  }
   const lines = Math.ceil(SITE.h / sp) + 1, per = Math.ceil(SITE.w / st) + 1;
   const y0 = (SITE.h - (lines - 1) * sp) / 2, x0 = (SITE.w - (per - 1) * st) / 2, photos = [];
   for (let l = 0; l < lines; l++) for (let i = 0; i < per; i++) {
     const j = l % 2 ? per - 1 - i : i;                        // serpentine "lawnmower"
     photos.push({ x: x0 + j * st, y: y0 + l * sp });
   }
-  const speed = Math.min(12, st / 2);                         // camera can't fire faster than every ~2 s
-  const time = (lines * (per - 1) * st + (lines - 1) * sp) / speed + (lines - 1) * 8; // + 8 s per turn
-  return fCache = { key, gsd, fw, fh, sp, st, lines, per, photos, time };
+  const time = (lines * (per - 1) * st + (lines - 1) * sp) / speed + (lines - 1) * d.turn;
+  const r = { key, gsd, fw, fh, sp, st, lines, per, photos, time, res, speed, dens, tooFast, endur: d.endur[o.sensor] || d.endur.rgb };
+  return o === S ? fCache = r : r;
+}
+function selfTest() {
+  try {
+    const q = flight({ ...S }), fx = flight({ ...S, uav: 'fixed' }), li = flight({ ...S, sensor: 'lidar' });
+    const ok = (c, m) => { if (!c) throw new Error(m); };
+    ok(q.photos.length === 136, 'photos ' + q.photos.length); ok(Math.abs(q.gsd - 2.74) < .01, 'gsd ' + q.gsd);
+    ok(Math.abs(q.time - 344.5) < .5, 'time ' + q.time); ok(Math.abs(fx.time - 300) < 1, 'fixed ' + fx.time);
+    ok(Math.abs(li.dens - 686) < 1, 'dens ' + li.dens);
+    console.log('selfTest OK');
+  } catch (e) { console.error('selfTest FAIL', e); }
 }
 
 /* ---------- GCP / RTK error model ---------- */
@@ -212,8 +303,51 @@ function errField() {
   S.err = { cells, rmse: Math.sqrt(sq / cells.length), max };
 }
 const errColor = m => m < .05 ? C.ok : m < .3 ? C.warn : C.bad;
-const finalAcc = () => Math.hypot(S.err.rmse, 1.5 * flight().gsd / 100); // map can't beat ~1.5 × GSD
+const finalAcc = () => Math.hypot(S.err.rmse, flight().res); // map can't beat ~1.5 × GSD (camera) or its point spacing (lidar)
 const USES = [['Engineering survey, cut & fill', .05], ['Stockpile volumes', .10], ['Construction progress', .30], ['Visual overview only', 3]];
+
+const SL = k => SENS[k].name.split(' ')[0], AL = ['rgb', 'multi', 'lidar'], RL = ['rgb', 'lidar'];
+// at/r: ring on the map · box: outline (ortho) · val(acc) = [result, '± text' or null, ± as fraction of result]
+const ANA = {
+  site: [
+    { name: 'Stockpile volume', kind: 'height', sens: RL, need: .10, at: [250, 70], r: 20, val: a => ['3,350 m³', '± ' + Math.round(a * 1257).toLocaleString('en') + ' m³', a * 1257 / 3350] },
+    { name: 'Cut & fill vs. design', kind: 'height', sens: RL, need: .05, at: [160, 135], r: 45, val: a => ['12,000 m³ dug', '± ' + Math.round(a * 4000).toLocaleString('en') + ' m³', a * 4000 / 12000] },
+    { name: 'Progress overview', kind: 'ortho', sens: AL, need: .30, box: [120, 110, 80, 50], val: () => ['Pit 80 × 50 m, cabins placed', null] }],
+  farm: [
+    { name: 'Crop health (NDVI)', kind: 'index', sens: ['multi'], need: .30, at: [260, 120], r: 60, val: () => ['1.7 ha stressed (17%)', null] },
+    { name: 'Wet spots', kind: 'height', sens: RL, need: .10, at: [90, 180], r: 30, val: a => ['Lowest spot 22 cm below field', '± ' + fmtErr(a), a / .22] },
+    { name: 'Field area', kind: 'ortho', sens: AL, need: 3, box: [0, 0, 400, 250], val: a => ['10.0 ha', '± ' + (a * .13).toFixed(2) + ' ha', a * .013] }],
+  town: [
+    { name: 'Building heights', kind: 'height', sens: RL, need: .30, at: [120, 62], r: 28, val: a => ['Tallest 14.2 m', '± ' + fmtErr(a), a / 14.2] },
+    { name: 'Flood risk: bare ground', kind: 'height', bare: true, sens: ['lidar'], need: .10, at: [200, 190], r: 25, val: a => ['Lowest street 0.6 m below square', '± ' + fmtErr(a), a / .6] },
+    { name: 'Tree health', kind: 'index', sens: ['multi'], need: .30, at: [290, 74], r: 14, val: () => ['1 of 3 trees stressed', null] }]
+};
+const A = () => ANA[S.scenario][S.ana] || ANA[S.scenario][S.ana = 0];
+function anaSt(e) {                                           // why (or whether) this analysis is locked
+  const a = finalAcc();
+  if (!e.sens.includes(S.sensor)) return { k: 'sensor', a, s: 'needs ' + e.sens.map(SL).join(' or ') };
+  return a > e.need ? { k: 'acc', a, s: 'needs ≤' + fmtErr(e.need) } : { k: 'ok', a, s: '✓' };
+}
+const inR = (x, y, [a, b, w, h]) => x >= a && x <= a + w && y >= b && y <= b + h;
+function elev(x, y, bare) {                                   // height above ground (m) at a site point, from FEAT
+  const F = FEAT[S.scenario], q = ([a, b, r]) => Math.hypot(x - a, y - b) / r;
+  let z = 0;
+  for (const b of F.bldg) if (inR(x, y, b)) z = b[4];
+  if (!bare) for (const t of F.tree || []) if (q(t) < 1) z = Math.max(z, t[3] * (.55 + .45 * Math.sqrt(1 - q(t) ** 2)));
+  for (const p of F.pile || []) if (q(p) < 1) z = Math.max(z, p[3] * (1 - q(p)));
+  for (const p of F.pit || []) if (inR(x, y, p)) z = -p[4];
+  for (const l of F.low || []) if (q(l) < 1) z -= l[3] * (1 - q(l) ** 2);
+  return z;
+}
+const idxCol = v => [.85 - .6 * v, .25 + .55 * v, .2];       // red (stressed) > green (healthy)
+function ndvi(x, y) {                                         // plant-health 0..1 from FEAT
+  const F = FEAT[S.scenario], s = F.stress;
+  if (F.bldg.some(b => inR(x, y, b))) return .1;
+  const i = (F.tree || []).findIndex(([a, b, r]) => Math.hypot(x - a, y - b) < r);
+  if (i >= 0) return S.scenario === 'town' && i === 1 ? .3 : .9;
+  if (s) { const q = ((x - s[0]) / s[2]) ** 2 + ((y - s[1]) / s[3]) ** 2; if (q < 1) return .2 + .5 * q; }
+  return F.rows && y > F.rows[0] && y < F.rows[1] ? .8 : .45;
+}
 
 /* ---------- shared RTK switch ---------- */
 const rtkSwitch = () => `<button class="switch" role="switch" aria-checked="${S.rtk}" data-rtk><span></span>${term('rtk', 'RTK')} corrections</button>`;
@@ -224,11 +358,185 @@ function bindRtk() {
   });
 }
 
+// grid, photo footprints up to index `fp` (omit for none), site, dashed path, fixed-wing turn loops
+function drawPlan(f, fp) {
+  const rw = f.fh * MS, rh = f.fw * MS;
+  drawGrid(50 * MS, OX, OY);
+  if (fp != null) {
+    ctx.fillStyle = C.accent; ctx.globalAlpha = .45 * (1 - S.overlap / 100) ** 1.6;
+    for (let j = 0; j <= fp; j++) { const [x, y] = px(f.photos[j].x, f.photos[j].y); ctx.fillRect(x - rw / 2, y - rh / 2, rw, rh); }
+    ctx.globalAlpha = 1;
+  }
+  drawSite();
+  ctx.strokeStyle = C.accent; ctx.lineWidth = 1; ctx.globalAlpha = .6; ctx.setLineDash([3, 4]);
+  ctx.beginPath(); f.photos.forEach((p, j) => ctx[j ? 'lineTo' : 'moveTo'](...px(p.x, p.y))); ctx.stroke();
+  if (S.uav === 'fixed') for (let l = 0; l < f.lines - 1; l++) {     // wide U-turns past the line ends
+    const a = f.photos[(l + 1) * f.per - 1], b = f.photos[(l + 1) * f.per], [x, y] = px(a.x, (a.y + b.y) / 2);
+    ctx.beginPath(); ctx.ellipse(x, y, DRONES.fixed.R * MS, (b.y - a.y) / 2 * MS, 0, l % 2 ? Math.PI / 2 : -Math.PI / 2, l % 2 ? 1.5 * Math.PI : Math.PI / 2); ctx.stroke();
+  }
+  ctx.setLineDash([]); ctx.globalAlpha = 1; siteLabel();
+}
+const choice = (k, opts) => `<div class="btns">${opts.map(([v, l, dis]) => `<button class="b" data-k="${k}" data-v="${v}" aria-pressed="${S[k] == v}"${dis ? ` disabled title="${dis}"` : ''}>${l}</button>`).join('')}</div>`;
+function bindChoice(after) {
+  document.querySelectorAll('[data-k]').forEach(b => b.onclick = () => {
+    const k = b.dataset.k, v = b.dataset.v;
+    S[k] = typeof S[k] === 'number' ? +v : v; after?.(); go(cur.id);
+    document.querySelector(`[data-k=${k}][data-v="${v}"]`)?.focus();
+  });
+}
+
 /* ---------- topics ---------- */
 const STEPS = [
-  { id: 'mission', t: 'Mission' },
-  { id: 'uav', t: 'UAV types' },
-  { id: 'sensors', t: 'Sensors' },
+  {
+    id: 'mission', t: 'Mission',
+    alt: 'Top-down sketch of the chosen site with its key features highlighted one after another.',
+    cap: 'A top-down sketch of your site. Rings mark what the client cares about. One grid square is 50 m.',
+    html: () => `<h2>Every map starts with a question</h2>
+<p>Nobody flies a mapping drone just to take pictures. There's always a question behind it: how much gravel is left in that pile? Which part of the field is struggling? Which street floods first? The question decides how sharp and how accurate the map has to be, and that decides almost everything after it.</p>
+<p>Pick a job. You'll plan it, fly it and process it in the next topics, and your choices carry through to the end.</p>
+<ul class="try"><li>Pick each job and watch the accuracy target change.</li><li>Keep the one you like. Later topics use it.</li></ul>
+${choice('scenario', Object.entries(SCN).map(([k, s]) => [k, s.name]))}
+<p class="try" style="padding-left:12px"><b>"${SCN[S.scenario].q}"</b></p>
+<div class="readouts">${ro('area', 'Area')}${ro('need', 'Accuracy needed')}${ro('sens', 'Usual sensor')}${ro('who', 'Client')}</div>
+<p class="take">Start with the question, not the drone. What you need to measure sets the accuracy target, and that target shapes every choice after it.</p>`,
+    bind: bindChoice,
+    upd() {
+      const s = SCN[S.scenario];
+      $('#area').textContent = '10 ha (400 × 250 m)'; $('#need').textContent = '≤ ' + fmtErr(s.need);
+      $('#sens').textContent = SENS[s.best].name; $('#who').textContent = s.who;
+    },
+    draw(t) {
+      drawGrid(50 * MS, OX, OY); drawSite();
+      const n = FEAT[S.scenario].notes, on = Math.floor(t / 2500) % 3, ph = t % 2500 / 2500;
+      n.forEach(([x, y, l, lo], i) => {
+        const a = RM || i === on, r = RM ? 18 : a ? 14 + 8 * ph : 14, [cx, cy] = px(x, y);
+        ctx.strokeStyle = C.accent; ctx.lineWidth = 2; ctx.globalAlpha = RM ? 1 : a ? 1 - .6 * ph : .3;
+        ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.stroke(); ctx.globalAlpha = 1;
+        txt(l, cx + (lo || r) + 6, cy + 4, { color: a ? C.ink : C.muted, weight: a ? 500 : 400 });
+      });
+    }
+  },
+  {
+    id: 'uav', t: 'UAV types',
+    alt: 'Top: a drone flying two survey lines and turning between them. Bottom: bars comparing the area one battery covers for each drone type.',
+    cap: 'Top: how each drone gets from one survey line to the next. Bottom: how much ground one battery covers with your current flight plan.',
+    html: () => `<h2>Two ways to fly</h2>
+<p>Mapping drones come in two main shapes. A ${term('multirotor', 'multirotor')} has four or more propellers, like a small helicopter. It can hover, turn on the spot and take off from a parking space, but it drains its battery quickly.</p>
+<p>A ${term('fixedwing', 'fixed-wing')} flies like a small plane. The wings do the lifting, so it stays up two to three times longer and flies faster. But it can't hover, and it needs wide turns. Many take off straight up (${term('vtol', 'VTOL')}), so no runway is needed, but they still need open sky around them.</p>
+<ul class="try"><li>Switch to fixed-wing and compare the area per battery.</li><li>Watch what happens at the end of each line.</li></ul>
+${choice('uav', [['quad', 'Multirotor'], ['fixed', 'Fixed-wing']])}
+<div class="readouts">${ro('spd', 'Cruise speed')}${ro('fl', 'Flight time per battery')}${ro('apb', 'Area per battery')}${ro('trn', 'Turns')}</div>
+<ul class="warns" id="warns" aria-live="polite"></ul>
+<p class="take">Multirotors are nimble and fixed-wings are efficient. Small or crowded sites suit a multirotor. Big open areas suit a fixed-wing.</p>`,
+    bind() { bindChoice(() => { if (S.uav === 'fixed' && S.sensor === 'lidar') { S.sensor = 'rgb'; S.note = 'lidar'; } }); },
+    upd() {
+      const f = flight(), w = [], s = S.scenario, fx = S.uav === 'fixed';
+      this.v = {};                                              // area per battery, ha (a fixed-wing can't carry lidar, so it falls back to rgb)
+      for (const k of ['quad', 'fixed']) { const g = flight({ ...S, uav: k, sensor: k === 'fixed' && S.sensor === 'lidar' ? 'rgb' : S.sensor }); this.v[k] = 10 * g.endur * 60 / g.time; }
+      $('#spd').textContent = DRONES[S.uav].speed + ' m/s'; $('#fl').textContent = f.endur + ' min';
+      $('#apb').textContent = this.v[S.uav].toFixed(0) + ' ha'; $('#trn').textContent = fx ? '~120 m wide' : 'on the spot';
+      if (S.note === 'lidar') { w.push(['bad', 'LiDAR is too heavy for this fixed-wing, so your sensor was switched to the RGB camera.']); S.note = null; }
+      if (s === 'town' && fx) w.push(['warn', 'A fixed-wing needs open space around it, and its wide turns overshoot a small town block. A multirotor fits here better.']);
+      if (s === 'farm' && fx) w.push(['ok', 'Good fit. Open fields are where fixed-wings shine.']);
+      if (s !== 'farm' && !fx) w.push(['ok', 'Good fit. A multirotor can take off from a parking space and fly close to buildings.']);
+      if (fx) w.push(['warn', "On a site this small, the fixed-wing's speed is eaten up by its wide turns. Its advantage shows on big areas."]);
+      $('#warns').innerHTML = w.map(([c, s]) => `<li class="${c}">${s}</li>`).join('');
+    },
+    draw(t) {
+      const f = flight(), sp = Math.min(f.sp * 2, 190), ym = 130, y1 = ym - sp / 2, y2 = ym + sp / 2, R = DRONES.fixed.R * 2, fx = S.uav === 'fixed';
+      const pos = u => {
+        if (u < .35) return [100 + 400 * u / .35, y1];
+        if (u < .5) { const k = (u - .35) / .15, th = -Math.PI / 2 + Math.PI * k; return fx ? [500 + R * Math.cos(th), ym + sp / 2 * Math.sin(th)] : [500, y1 + sp * k]; }
+        return u < .85 ? [500 - 400 * (u - .5) / .35, y2] : [100, y2];
+      };
+      const u = RM ? .43 : t % 5000 / 5000, p = pos(u), q = pos(Math.min(u + .002, .999));
+      ctx.strokeStyle = C.accent; ctx.lineWidth = 1; ctx.globalAlpha = .6; ctx.setLineDash([3, 4]);
+      line(100, y1, 500, y1); line(100, y2, 500, y2);
+      ctx.beginPath(); // ponytail: ellipse approximates a teardrop turn
+      if (fx) ctx.ellipse(500, ym, R, sp / 2, 0, -Math.PI / 2, Math.PI / 2); else { ctx.moveTo(500, y1); ctx.lineTo(500, y2); }
+      ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
+      txt(`lines ${f.sp.toFixed(0)} m apart`, 100, y1 - 10);
+      if (fx) txt('turn ≈ 120 m wide', 500 + R + 8, ym + 4); else txt('turns on the spot', 510, ym + 4);
+      craft(...p, p[0] === q[0] && p[1] === q[1] ? Math.PI : Math.atan2(q[1] - p[1], q[0] - p[0]));
+      txt('AREA PER BATTERY', 190, 300, { color: C.ink, weight: 500 });
+      const max = Math.max(this.v.quad, this.v.fixed);
+      ['quad', 'fixed'].forEach((k, i) => {
+        const y = 320 + i * 60, sel = k === S.uav, w = 460 * this.v[k] / max;
+        ctx.fillStyle = sel ? C.accent : C.muted; ctx.globalAlpha = sel ? .85 : .35; ctx.fillRect(190, y, w, 30); ctx.globalAlpha = 1;
+        txt(DRONES[k].name, 180, y + 19, { align: 'right', color: sel ? C.accent : C.muted, sans: true, size: 13 });
+        txt(this.v[k].toFixed(0) + ' ha', 198 + w, y + 19, { color: C.ink });
+      });
+    }
+  },
+  {
+    id: 'sensors', t: 'Sensors', dots: [], loop: -1, n: 0,
+    alt: 'Side view of a drone flying over a hill, a building, a tree and a pile, showing what the chosen sensor sees.',
+    cap: 'Side view. The shaded cone is what the camera sees. Dots are laser echoes. Look under the tree.',
+    html: () => `<h2>What the drone carries</h2>
+<p>The drone just carries the sensor. The sensor underneath decides what you actually measure.</p>
+<p>An ${term('rgb', 'RGB')} camera takes ordinary, very sharp photos. It's the cheapest and most common choice. A ${term('multispectral', 'multispectral')} camera also records light our eyes can't see, such as near-infrared, which healthy leaves reflect strongly. That's how farmers spot sick crops before they look sick. ${term('lidar', 'LiDAR')} takes no pictures at all. It fires hundreds of thousands of laser pulses a second and times each echo. Some pulses slip through gaps in the leaves and reach the ground.</p>
+<ul class="try"><li>Compare what each sensor sees under the tree.</li><li>Pick LiDAR and read the warning.</li></ul>
+${choice('sensor', [['rgb', 'RGB camera'], ['multi', 'Multispectral'], ['lidar', 'LiDAR', S.uav === 'fixed' && 'Too heavy for the fixed-wing']])}
+<div class="readouts">${ro('rec', 'Records')}${ro('det', `Detail at ${S.alt} m`)}${ro('und', 'Sees ground under trees')}${ro('sfl', 'Flight time per battery')}</div>
+<ul class="warns" id="warns" aria-live="polite"></ul>
+<p class="take">Pick the sensor for the question: photos for looks and volumes, multispectral for plant health, LiDAR for the ground under trees.</p>`,
+    bind: bindChoice,
+    upd() {
+      const f = flight(), lid = S.sensor === 'lidar', sc = SCN[S.scenario], w = [];
+      this.dots = []; this.n = 0;
+      $('#rec').textContent = { rgb: 'Color photos', multi: '5 light bands', lidar: 'Laser points' }[S.sensor];
+      $('#det').textContent = lid ? f.dens.toFixed(0) + ' pts/m²' : f.gsd.toFixed(1) + ' cm/px';
+      $('#und').textContent = lid ? 'Partly' : 'No'; $('#sfl').textContent = f.endur + ' min';
+      if (lid && !S.rtk) w.push(['bad', `LiDAR needs ${term('rtk', 'RTK')} or ${term('ppk', 'PPK')}. Each laser point is placed using the drone's position at that instant, so a 2 m GPS error becomes a 2 m error in every point.`]);
+      if (lid) w.push(['ok', `LiDAR also needs an ${term('imu', 'IMU')} to know which way each pulse was aimed. It's built into the scanner.`]);
+      if (S.sensor === 'multi') w.push(['warn', 'Multispectral readings change with the sunlight. Photograph a grey calibration panel before and after each flight.']);
+      if (S.sensor !== sc.best) w.push(['warn', `For a ${sc.name.toLowerCase()}, a ${SENS[sc.best].name} is the usual choice. The Analysis topic shows what you lose.`]);
+      if (S.uav === 'fixed') w.push(['warn', "LiDAR is greyed out because it's too heavy for the fixed-wing."]);
+      $('#warns').innerHTML = w.map(([c, s]) => `<li class="${c}">${s}</li>`).join('');
+    },
+    gy: x => 400 - 22 * Math.exp(-(((x - 110) / 60) ** 2)) - Math.max(0, 40 * (1 - Math.abs(x - 655) / 45)),
+    crown: (x, y) => Math.hypot(x - 470, y - 315) < 40,
+    solid(x, y, sc) { return y >= this.gy(x) || (x >= 250 && x <= 340 && y >= 330) || (x >= 466 && x <= 474 && y >= 350) || (!sc && this.crown(x, y)); },
+    fire(dx) {                                                  // 6 rays; a crown hit lets 30% through (deterministic hash)
+      const h = n => { const s = Math.sin(n * 127.1) * 43758.5453; return s - Math.floor(s); };
+      for (let k = 0; k < 6; k++) {
+        const a = ((k / 5 - .5) * 70 + (h(this.n * 6 + k) - .5) * 8) * Math.PI / 180, sx = Math.sin(a) * 2, sy = Math.cos(a) * 2;
+        let x = dx, y = 80, sc = false;
+        for (;;) {
+          while (y < 420 && !this.solid(x, y, sc)) { x += sx; y += sy; }
+          if (!sc && y < 420 && this.crown(x, y) && h(this.n * 6 + k + .5) < .3) { sc = true; continue; }
+          break;
+        }
+        if (y < 420 && x >= 0 && x <= W) this.dots.push([x, y]);
+      }
+      this.n++;
+    },
+    draw(t) {
+      const lid = S.sensor === 'lidar', multi = S.sensor === 'multi', dx = RM ? 400 : -20 + 840 * (t % 8000) / 8000, a2 = a => a * Math.PI / 180;
+      ctx.beginPath(); ctx.moveTo(0, H); for (let x = 0; x <= W; x += 2) ctx.lineTo(x, this.gy(x)); ctx.lineTo(W, H);
+      ctx.fillStyle = C.site; ctx.globalAlpha = .5; ctx.fill(); ctx.globalAlpha = 1; ctx.strokeStyle = C.muted; ctx.lineWidth = 1; ctx.stroke();
+      ctx.fillStyle = C.site; ctx.fillRect(250, 330, 90, 70); ctx.strokeRect(250, 330, 90, 70); ctx.fillRect(466, 350, 8, 50);
+      ctx.beginPath(); ctx.arc(470, 315, 40, 0, 7); ctx.globalAlpha = .9; ctx.fill(); ctx.globalAlpha = 1; ctx.stroke();
+      if (multi) for (const [c, s, e] of [[C.ok, Math.PI / 2, Math.PI * 1.5], [C.warn, -Math.PI / 2, Math.PI / 2]]) { ctx.beginPath(); ctx.arc(470, 315, 40, s, e); ctx.fillStyle = c; ctx.globalAlpha = .7; ctx.fill(); ctx.globalAlpha = 1; }
+      txt('building', 295, 322, { align: 'center' }); txt('tree', 470, 266, { align: 'center' }); txt('pile', 655, 350, { align: 'center' });
+      const tx = Math.tan(a2(lid ? 35 : 37)) * 330;
+      if (lid) {
+        ctx.strokeStyle = C.accent; ctx.globalAlpha = .4; ctx.setLineDash([4, 4]); line(dx, 80, dx - tx, 410); line(dx, 80, dx + tx, 410); ctx.setLineDash([]); ctx.globalAlpha = 1;
+        if (RM) { if (!this.dots.length) for (let x = 0; x <= W; x += 2) this.fire(x); }
+        else { const lp = Math.floor(t / 8000); if (lp !== this.loop) { this.loop = lp; this.dots = []; } this.fire(dx); }
+        ctx.fillStyle = C.accent; for (const [x, y] of this.dots) ctx.fillRect(x - 1, y - 1, 2, 2);
+      } else {
+        ctx.save(); ctx.beginPath(); ctx.moveTo(dx, 80); ctx.lineTo(dx - tx, 410); ctx.lineTo(dx + tx, 410); ctx.closePath();
+        ctx.fillStyle = C.accent; ctx.globalAlpha = .1; ctx.fill(); ctx.globalAlpha = 1; ctx.clip();
+        ctx.strokeStyle = C.accent; ctx.lineWidth = 3; ctx.beginPath();
+        let pen = false;                                        // open ground only: the camera can't see under the tree or the building
+        for (let x = 0; x <= W; x += 2) { if (Math.abs(x - 470) < 42 || (x >= 250 && x <= 340)) { pen = false; continue; } ctx[pen ? 'lineTo' : 'moveTo'](x, this.gy(x)); pen = true; }
+        ctx.moveTo(250, 330); ctx.lineTo(340, 330); ctx.moveTo(510, 315); ctx.arc(470, 315, 40, 0, -Math.PI, true); ctx.stroke(); ctx.restore();
+        if (multi) { const B = ['#4ea1ff', C.ok, C.bad, '#c0578f', '#9a5bd6']; B.forEach((c, b) => { ctx.strokeStyle = c; ctx.lineWidth = 2; ctx.globalAlpha = .7; const a = a2(-28 + 14 * b); line(dx, 80, dx + Math.tan(a) * 320, 400); }); ctx.globalAlpha = 1; }
+      }
+      ctx.lineWidth = 1; craft(dx, 80, 0);
+    }
+  },
   {
     id: 'flight', t: 'Flight plan',
     alt: 'Top-down map of the site with the drone flying parallel lines and photo footprints appearing.',
@@ -236,10 +544,11 @@ const STEPS = [
     html: () => `<h2>Planning the flight</h2>
 <p>A mapping drone doesn't wander around. It flies a <b>lawnmower pattern</b> of straight lines and takes a photo every few meters. Later, software stitches the photos together like a jigsaw puzzle. That only works if each photo shares a large part of its view with its neighbors. That shared part is the ${term('overlap', 'overlap')}.</p>
 <ul class="try"><li>Lower the <b>altitude</b>: photos get sharper (smaller ${term('gsd', 'GSD')}), but you need far more of them.</li><li>Push <b>overlap</b> below 65% and watch the warning.</li></ul>
+<p>Flying: <b>${DRONES[S.uav].name} · ${SENS[S.sensor].name}</b> <button class="b" data-go="uav">Drone</button> <button class="b" data-go="sensors">Sensor</button></p>${S.sensor === 'lidar' ? '<p>LiDAR scans a continuous strip, so overlap here means side overlap between strips. 30–50% is typical.</p>' : ''}
 <div class="ctl"><label for="alt">Altitude <b id="altv"></b></label><input id="alt" type="range" min="40" max="150" step="5"></div>
 <div class="ctl"><label for="ov">Overlap <b id="ovv"></b></label><input id="ov" type="range" min="50" max="90" step="5"></div>
-<div class="readouts">${ro('gsd', 'Detail (GSD)')}${ro('nph', 'Photos')}${ro('ftime', 'Flight time')}${ro('batt', 'Batteries')}</div>
-<ul class="warns" id="warns"></ul>
+<div class="readouts">${ro('gsd', S.sensor === 'lidar' ? 'Point density' : 'Detail (GSD)')}${ro('nph', S.sensor === 'lidar' ? 'Points' : 'Photos')}${ro('ftime', 'Flight time')}${ro('batt', 'Batteries')}</div>
+<ul class="warns" id="warns" aria-live="polite"></ul>
 <p class="take">Every flight plan is a trade-off. Sharper detail costs flight time, batteries, and processing hours.</p>`,
     bind() {
       $('#alt').value = S.alt; $('#ov').value = S.overlap;
@@ -247,34 +556,29 @@ const STEPS = [
       $('#ov').oninput = e => { S.overlap = +e.target.value; this.upd(); };
     },
     upd() {
-      const f = flight(), batt = Math.ceil(f.time / (22 * 60)), w = [];
+      const f = flight(), lid = S.sensor === 'lidar', batt = Math.ceil(f.time / (f.endur * 60)), w = [];
       $('#altv').textContent = S.alt + ' m'; $('#ovv').textContent = S.overlap + '%';
-      $('#gsd').textContent = f.gsd.toFixed(1) + ' cm/px';
-      $('#nph').textContent = f.photos.length.toLocaleString('en');
+      $('#gsd').textContent = lid ? f.dens.toFixed(0) + ' pts/m²' : f.gsd.toFixed(1) + ' cm/px';
+      $('#nph').textContent = lid ? (f.dens * 1e5 / 1e6).toFixed(1) + ' M' : f.photos.length.toLocaleString('en');
       $('#ftime').textContent = fmtTime(f.time);
       $('#batt').textContent = batt;
-      if (S.overlap < 65) w.push(['bad', 'Overlap too low. The software may fail to match photos and leave holes in the map.']);
+      if (S.overlap < 65 && !lid) w.push(['bad', 'Overlap too low. The software may fail to match photos and leave holes in the map.']);
+      if (f.tooFast) w.push(['bad', `A fixed-wing can't slow down. It would need a photo every ${(f.st / f.speed).toFixed(1)} s, faster than the camera can fire. Fly higher or lower the overlap.`]);
+      if (lid && S.alt > 100) w.push(['warn', 'LiDAR echoes weaken above about 100 m, so point density and accuracy drop.']);
       if (S.alt > 120) w.push(['warn', 'Above 120 m. Most countries require a special permit.']);
       if (batt > 1) w.push(['warn', `Needs ${batt} batteries. The drone has to land and swap mid-mission.`]);
-      if (f.photos.length > 1500) w.push(['warn', 'Over 1,500 photos. Processing will take hours.']);
+      if (!lid && f.photos.length > 1500) w.push(['warn', 'Over 1,500 photos. Processing will take hours.']);
       $('#warns').innerHTML = w.map(([c, s]) => `<li class="${c}">${s}</li>`).join('');
     },
     draw(t) {
-      const f = flight(), N = f.photos.length, ov = S.overlap / 100;
+      const f = flight(), N = f.photos.length;
       const dur = clamp(N * 40, 5000, 14000), tt = RM ? dur : t % (dur + 1500);
       const k = Math.min(1, tt / dur) * (N - 1), i = Math.floor(k), a = f.photos[i], b = f.photos[Math.min(N - 1, i + 1)];
       const rw = f.fh * MS, rh = f.fw * MS;
-      drawGrid(50 * MS, OX, OY);
-      ctx.fillStyle = C.accent; ctx.globalAlpha = .45 * (1 - ov) ** 1.6;
-      for (let j = 0; j <= i; j++) { const [x, y] = px(f.photos[j].x, f.photos[j].y); ctx.fillRect(x - rw / 2, y - rh / 2, rw, rh); }
-      ctx.globalAlpha = 1;
-      drawSite();
-      ctx.strokeStyle = C.accent; ctx.lineWidth = 1; ctx.globalAlpha = .6; ctx.setLineDash([3, 4]);
-      ctx.beginPath(); f.photos.forEach((p, j) => ctx[j ? 'lineTo' : 'moveTo'](...px(p.x, p.y))); ctx.stroke();
-      ctx.setLineDash([]); ctx.globalAlpha = 1;
+      drawPlan(f, i);
       const [cx, cy] = px(a.x, a.y); ctx.lineWidth = 1.5; ctx.strokeRect(cx - rw / 2, cy - rh / 2, rw, rh);
-      const u = k - i; drone(...px(a.x + (b.x - a.x) * u, a.y + (b.y - a.y) * u));
-      txt(`${f.lines} lines · photo every ${f.st.toFixed(0)} m · lines ${f.sp.toFixed(0)} m apart`, OX, H - 12);
+      const u = k - i; craft(...px(a.x + (b.x - a.x) * u, a.y + (b.y - a.y) * u), Math.atan2(b.y - a.y, b.x - a.x));
+      txt(S.sensor === 'lidar' ? `${f.lines} strips · ${f.sp.toFixed(0)} m apart · ${f.dens.toFixed(0)} pts/m²` : `${f.lines} lines · photo every ${f.st.toFixed(0)} m · lines ${f.sp.toFixed(0)} m apart`, OX, H - 12);
     }
   },
   {
@@ -287,6 +591,7 @@ const STEPS = [
 <ul class="try"><li>Toggle RTK and compare the blue map with the grey real-world features.</li><li>Watch the drone's uncertainty circle.</li></ul>
 <div class="ctl">${rtkSwitch()}</div>
 <div class="readouts">${ro('mode', 'Position mode')}${ro('acc', 'Accuracy')}${ro('size', 'Error about the size of')}${ro('link', 'Base station link')}</div>
+<ul class="warns" id="warns" aria-live="polite"></ul>
 <p class="take">GPS alone gives you a map in roughly the right place. RTK puts it exactly where it belongs.</p>`,
     bind: bindRtk,
     upd() {
@@ -294,6 +599,7 @@ const STEPS = [
       $('#acc').textContent = S.rtk ? '± 2 cm' : '± 2.5 m';
       $('#size').textContent = S.rtk ? 'a coin' : 'a car';
       $('#link').textContent = S.rtk ? 'connected' : 'off';
+      $('#warns').innerHTML = S.sensor === 'lidar' && !S.rtk ? '<li class="bad">Your LiDAR needs this switched on. Without RTK every laser point is meters off.</li>' : '';
     },
     draw(t) {
       const RS = 20, RX = 400, RY = 280;                      // zoomed view: 20 px per meter
@@ -322,7 +628,7 @@ const STEPS = [
       const [qx, qy] = rp(D[0], D[1], e);
       ctx.strokeStyle = C.accent; ctx.lineWidth = 1; ctx.setLineDash([4, 3]);
       ctx.beginPath(); ctx.arc(qx, qy, Math.max(4, a * RS), 0, 7); ctx.stroke(); ctx.setLineDash([]);
-      drone(...rp(D[0], D[1], [0, 0]));
+      craft(...rp(D[0], D[1], [0, 0]));
       ctx.fillStyle = C.accent; ctx.beginPath(); ctx.arc(qx, qy, 3.5, 0, 7); ctx.fill();
       // scale bar
       ctx.strokeStyle = C.ink; ctx.lineWidth = 2; line(20, H - 20, 20 + 5 * RS, H - 20); txt('5 m', 20, H - 28, { color: C.ink });
@@ -346,7 +652,7 @@ const STEPS = [
         }
         ctx.globalAlpha = 1;
       }
-      ctx.save(); ctx.translate(...dr); ctx.scale(.7, .7); drone(0, 0); ctx.restore();
+      ctx.save(); ctx.translate(...dr); ctx.scale(.7, .7); craft(0, 0); ctx.restore();
       txt('satellites', 666, 52, { align: 'center' });
       txt('drone', 714, 112);
       txt('RTK base', base[0] + 14, base[1] + 14);
@@ -364,7 +670,7 @@ const STEPS = [
 <div class="btns"><button class="b" data-p="clear">Clear</button><button class="b" data-p="one">1 GCP</button><button class="b" data-p="bunch">Bunched</button><button class="b" data-p="spread">Spread out</button></div>
 <div class="ctl">${rtkSwitch()}</div>
 <div class="readouts">${ro('ng', 'GCPs placed')}${ro('rmse', 'Average error')}${ro('worst', 'Worst spot')}${ro('rtks', 'RTK')}</div>
-<ul class="warns" id="warns"></ul>
+<ul class="warns" id="warns" aria-live="polite"></ul>
 <p class="take">Put GCPs around the edges plus one in the middle. A single pin fixes the shift, but the map can still stretch or turn around it.</p>`,
     presets: {
       clear: [], one: [{ x: 30, y: 30 }],
@@ -430,8 +736,89 @@ const STEPS = [
       if (!S.gcps.length) txt('Click anywhere on the site to place a GCP', W / 2, H - 12, { align: 'center', color: C.accent });
     }
   },
-  { id: 'gcs', t: 'Ground station' },
-  { id: 'process', t: 'Processing' },
+  {
+    id: 'gcs', t: 'Ground station',
+    alt: 'Top-down flight plan with a home marker H, the drone flying its route, a banner for return-to-home, and a telemetry line along the bottom.',
+    cap: "The pilot's view: your flight plan, the drone's live position, and the telemetry line at the bottom. H = home point.",
+    html: () => `<h2>Flying the mission</h2>
+<p>Nobody steers a mapping drone with joysticks. The pilot uses a ${term('gcs', 'ground control station')}, a controller or tablet running a flight app. It uploads the plan as a list of ${term('waypoint', 'waypoints')}, the drone flies itself, and the screen shows live ${term('telemetry', 'telemetry')}: height, speed, battery, satellites and photos taken.</p>
+<p>The pilot's job is to watch and be ready to step in. When the battery runs low, the drone triggers ${term('rth', 'return-to-home')} by itself, lands for a fresh battery, then picks up where it left off.</p>
+<ul class="try"><li>Raise the wind and watch flight time and battery swaps grow.</li><li>Watch the drone head home when the battery hits 20%.</li></ul>
+<div class="ctl"><label for="wind">Wind <b id="windv"></b></label><input id="wind" type="range" min="0" max="14" step="1"></div>
+<div class="readouts">${ro('wp', 'Waypoints')}${ro('wt', 'Flight time in this wind')}${ro('sw', 'Battery swaps')}${ro('lk', 'Position link')}</div>
+<ul class="warns" id="warns" aria-live="polite"></ul>
+<p class="take">The drone flies the plan and the pilot keeps it safe. Return-to-home brings it back before the battery runs out.</p>`,
+    bind() { $('#wind').value = S.wind; $('#wind').oninput = e => { S.wind = +e.target.value; this.upd(); }; },
+    info() { const f = flight(), T = f.time * (1 + .03 * S.wind); return { f, T, B: Math.ceil(T / (f.endur * 60)) }; },
+    upd() {
+      const { f, T, B } = this.info(), fx = S.uav === 'fixed', w = [];
+      $('#windv').textContent = S.wind + ' m/s';
+      $('#wp').textContent = f.lines * 2; $('#wt').textContent = fmtTime(T);
+      $('#sw').textContent = B - 1; $('#lk').textContent = S.rtk ? 'RTK fixed' : 'GPS only';
+      if (S.wind > (fx ? 12 : 10)) w.push(['bad', 'Too windy. Most mapping drones are rated to about 10–12 m/s. Postpone the flight.']);
+      else if (S.wind >= 7) w.push(['warn', 'Gusty. Photos may blur, and the drone burns battery fighting the wind.']);
+      if (B > 1) w.push(['warn', `The drone will fly home ${B - 1} time${B > 2 ? 's' : ''} to swap batteries, then continue where it stopped.`]);
+      if (!S.rtk) w.push(['warn', 'No RTK link. Photos get tagged with plain GPS positions.']);
+      if (S.sensor === 'multi') w.push(['warn', 'Before takeoff, photograph the calibration panel.']);
+      $('#warns').innerHTML = w.map(([c, s]) => `<li class="${c}">${s}</li>`).join('');
+    },
+    draw(t) {
+      const { f, T, B } = this.info(), N = f.photos.length, E = f.endur * 60, D = clamp(B * 6000, 8000, 20000);
+      let tau = T / 2, bat = 100 - 80 * (tau % E) / E, leg = -1, done = false;   // RM: mid-mission
+      if (!RM) {
+        let ms = t % (D + (B - 1) * 1500 + 2500); tau = T; done = true;
+        for (let i = 0; i < B; i++) {
+          const seg = Math.min(E, T - i * E) * D / T;
+          if (ms <= seg) { tau = i * E + ms * T / D; bat = 100 - 80 * (tau - i * E) / E; done = false; break; }
+          ms -= seg;
+          if (i < B - 1) { if (ms < 1500) { tau = (i + 1) * E; leg = ms / 1500; bat = 20; done = false; break; } ms -= 1500; }
+        }
+      }
+      const k = clamp(tau / T, 0, 1) * (N - 1), i = Math.floor(k), a = f.photos[i], b = f.photos[Math.min(N - 1, i + 1)], u = k - i;
+      let [x, y] = px(a.x + (b.x - a.x) * u, a.y + (b.y - a.y) * u), ang = Math.atan2(b.y - a.y, b.x - a.x);
+      const [hx, hy] = px(-30, 125);
+      drawPlan(f);
+      ctx.strokeStyle = C.ink; ctx.fillStyle = C.panel; ctx.lineWidth = 1.5; ctx.fillRect(hx - 8, hy - 8, 16, 16); ctx.strokeRect(hx - 8, hy - 8, 16, 16);
+      txt('H', hx, hy + 4, { align: 'center', color: C.ink, weight: 500 });
+      if (leg >= 0) {
+        const s = leg < .5 ? leg * 2 : 1 - (leg - .5) * 2;
+        ang = Math.atan2(hy - y, hx - x) + (leg < .5 ? 0 : Math.PI); x += (hx - x) * s; y += (hy - y) * s;
+      }
+      craft(x, y, ang);
+      const pct = Math.round(100 * k / (N - 1)), sats = S.rtk ? '24 · RTK FIX' : '17 · GPS';
+      txt(`ALT ${S.alt} m   SPD ${+f.speed.toFixed(1)} m/s   BAT ${Math.round(bat)}%   SATS ${sats}   ${S.sensor === 'lidar' ? `SCAN ${pct}%` : `PHOTOS ${done ? N : i}/${N}`}`, OX, H - 12);
+      if (leg >= 0) txt('RETURN TO HOME · battery 20%', W / 2, 22, { align: 'center', color: C.warn, size: 13, weight: 500 });
+      else if (done) txt('MISSION COMPLETE', W / 2, 22, { align: 'center', color: C.ok, size: 13, weight: 500 });
+    }
+  },
+  {
+    id: 'process', t: 'Processing', three: true,
+    alt: 'Rotating 3D point cloud of the site. Dots can be shown in true color, colored by height, or flattened into a top-down photo map.',
+    cap: 'Each dot is one measured 3D point, thinned out (real clouds have millions). Heights are exaggerated 3×. Drag to rotate.',
+    html: () => `<h2>From photos to a 3D model</h2>
+<p>Back at the office, ${term('photogrammetry', 'photogrammetry')} software looks through every photo for the same small details (a crack, a stone, a corner) appearing in several overlapping shots. These matches are ${term('tie', 'tie points')}. From how each detail shifts between photos, the software works out where every photo was taken and how high everything is.</p>
+<p>The result is a ${term('pointcloud', 'point cloud')}: millions of 3D dots, each with a color. From it, the software builds a height map (${term('dsm', 'DSM')}) and a flat, measurable photo map, the ${term('ortho', 'orthomosaic')}.</p>
+<p>${S.sensor === 'lidar' ? 'Your LiDAR skips the matching step. Each laser echo already is a 3D point, straight out of the sensor.' : 'Your photos have to be matched first. Spots seen in too few photos become holes.'}</p>
+<ul class="try"><li>Drag to turn the model.</li><li>Switch between the three outputs.</li><li>Go back, lower the overlap or switch to LiDAR, then come back here.</li></ul>
+${choice('view', [['cloud', 'Point cloud'], ['height', 'Height map'], ['ortho', 'Orthomosaic']])}
+<div class="readouts">${ro('pin', 'Input')}${ro('ptime', 'Processing time, desktop')}${ro('pcl', 'Point cloud')}${ro('pgr', 'Ground under trees')}</div>
+<ul class="warns" id="warns" aria-live="polite"></ul>
+<p class="take">Overlap turns into 3D. Every dot here exists because several photos, or one laser echo, agreed on where it is.</p>`,
+    bind: bindChoice,
+    upd() {
+      const f = flight(), lid = S.sensor === 'lidar', w = [], n = lid ? f.dens * 1e5 : 1e5 / (2 * f.gsd / 100) ** 2;
+      $('#pin').textContent = lid ? (n / 1e6).toFixed(1) + ' M laser points' : f.photos.length + ' photos';
+      $('#ptime').textContent = fmtTime(lid ? 120 + n / 1e6 * 3 : f.photos.length * 5);
+      $('#pcl').textContent = (n / 1e6).toFixed(0) + ' M points'; $('#pgr').textContent = lid ? 'Mapped' : 'Missing';
+      if (!lid && S.overlap < 65) w.push(['bad', "Low overlap left holes. Some spots were seen in fewer than three photos, so the software couldn't place them."]);
+      if (!lid) w.push(['warn', "Under the trees, the cloud only has treetops. Photos can't see through leaves."]);
+      else w.push(['ok', 'No matching step needed. Every laser echo is already a 3D point, including some on the ground under the trees.']);
+      if (!S.rtk && !S.gcps.length) w.push(['warn', 'The shape is right, but without RTK or GCPs the whole model sits meters away from its true position.']);
+      if (P3.st === 'fail') w.push(['warn', "The 3D view couldn't load. The numbers above still apply."]);
+      $('#warns').innerHTML = w.map(([c, s]) => `<li class="${c}">${s}</li>`).join('');
+    },
+    draw() { if (P3.st !== 'ok') txt(P3.st === 'fail' ? '3D view needs an internet connection and WebGL.' : 'Loading 3D view…', W / 2, H / 2, { align: 'center', sans: true, size: 15 }); }
+  },
   {
     id: 'accuracy', t: 'Accuracy check',
     alt: 'Chart comparing your map accuracy with the accuracy needed for different jobs.',
@@ -439,23 +826,23 @@ const STEPS = [
     html: () => `<h2>How good is your map?</h2>
 <p>Surveyors don't just trust the software. They lay out a few extra targets called ${term('icp', 'checkpoints')} that are <b>not</b> used for pinning, then compare the finished map against them. The result is one number, the ${term('rmse', 'RMSE')}.</p>
 <p>Here's what your choices so far add up to. Click a box to go back and change it.</p>
-<div class="readouts"><button class="ro" data-go="flight"><span>Detail (GSD)</span><b id="r1"></b></button><button class="ro" data-go="rtk"><span>RTK</span><b id="r2"></b></button><button class="ro" data-go="gcp"><span>GCPs</span><b id="r3"></b></button><div class="ro"><span>Expected accuracy</span><b id="r4"></b></div></div>
-<ul class="warns" id="warns"></ul>
+<div class="readouts"><button class="ro" data-go="flight"><span>${S.sensor === 'lidar' ? 'Point density' : 'Detail (GSD)'}</span><b id="r1"></b></button><button class="ro" data-go="rtk"><span>RTK</span><b id="r2"></b></button><button class="ro" data-go="gcp"><span>GCPs</span><b id="r3"></b></button><div class="ro"><span>Expected accuracy</span><b id="r4"></b></div><button class="ro" data-go="sensors"><span>Drone & sensor</span><b id="r5"></b></button><button class="ro" data-go="mission"><span>Job needs</span><b id="r6"></b></button></div>
+<ul class="warns" id="warns" aria-live="polite"></ul>
 <p class="take" id="verdict"></p>`,
-    bind() { document.querySelectorAll('[data-go]').forEach(b => b.onclick = () => go(b.dataset.go, true)); },
     upd() {
-      const f = flight(), v = finalAcc(), ok = USES.filter(u => v <= u[1]).map(u => u[0].toLowerCase());
-      $('#r1').textContent = f.gsd.toFixed(1) + ' cm/px';
+      const f = flight(), v = finalAcc(), sc = SCN[S.scenario], nd = sc.need, ok = USES.filter(u => v <= u[1]).map(u => u[0].toLowerCase());
+      $('#r1').textContent = S.sensor === 'lidar' ? f.dens.toFixed(0) + ' pts/m²' : f.gsd.toFixed(1) + ' cm/px';
+      $('#r5').textContent = DRONES[S.uav].name + ' · ' + SL(S.sensor); $('#r6').textContent = '≤ ' + fmtErr(nd);
       $('#r2').textContent = S.rtk ? 'on' : 'off';
       $('#r3').textContent = S.gcps.length;
       $('#r4').textContent = fmtErr(v); $('#r4').style.color = errColor(v);
-      $('#warns').innerHTML = 1.5 * f.gsd / 100 > S.err.rmse
+      $('#warns').innerHTML = f.res > S.err.rmse
         ? '<li>Your limit is now <b>photo detail</b>. Fly lower to do better.</li>'
         : '<li>Your limit is now <b>positioning</b>. Turn on RTK or spread out more GCPs.</li>';
-      $('#verdict').innerHTML = ok.length ? `Good enough for: <b>${ok.join(', ')}</b>.` : 'Not reliable for measuring anything yet. Try RTK or GCPs.';
+      $('#verdict').innerHTML = `Your ${sc.name.toLowerCase()} job needs ≤ ${fmtErr(nd)}: <b>${v <= nd ? '✓' : '✗'}</b> ` + (ok.length ? `Good enough for: <b>${ok.join(', ')}</b>.` : 'Not reliable for measuring anything yet. Try RTK or GCPs.');
     },
     draw() {
-      const v = finalAcc();
+      const v = finalAcc(), nd = SCN[S.scenario].need;
       S.shown = S.shown == null ? v : S.shown * Math.pow(v / S.shown, .08);
       const X = m => 90 + Math.log10(clamp(m, .01, 10) / .01) / 3 * 620;
       ctx.lineWidth = 1;
@@ -471,39 +858,203 @@ const STEPS = [
         txt(name, X(.01), y - 7, { sans: true, size: 13, color: C.ink, weight: 500 });
         txt('needs ≤ ' + fmtErr(th), X(th) + 8, y + 18, { color: pass ? C.ok : C.muted });
       });
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 1.5; ctx.setLineDash([5, 4]); line(X(nd), 78, X(nd), 380); ctx.setLineDash([]);
+      txt('JOB NEEDS', clamp(X(nd), 150, 650), 48, { align: 'center', color: C.ink, weight: 500 });
       const mx = X(S.shown);
       ctx.strokeStyle = C.accent; ctx.lineWidth = 2; line(mx, 78, mx, 380);
       txt('YOUR MAP ≈ ' + fmtErr(v), clamp(mx, 150, 650), 66, { align: 'center', color: C.accent, size: 13, weight: 500 });
     }
   },
-  { id: 'analysis', t: 'Analysis' }
+  {
+    id: 'analysis', t: 'Analysis', t0: null,
+    alt: 'The finished map read as data: height or plant-health colors, or a measured outline, with the chosen answer labelled. Locked analyses are greyed out.',
+    cap: 'Your finished map read as data. Colors show height or plant health. Grey means locked.',
+    html: () => `<h2>Answering the question</h2>
+<p>This is what the client actually pays for. The map is now a measuring tool, and software can read volumes, heights and plant health straight off it.</p>
+<p>Which answers you can give depends on everything before this: the sensor you carried and the accuracy you reached. Your job: <b>${SCN[S.scenario].q}</b></p>
+<ul class="try"><li>Click each analysis. Locked ones say what to change.</li><li>Go back, change the sensor or turn on RTK, and come back.</li></ul>
+${choice('ana', ANA[S.scenario].map((e, i) => [i, `${e.name} · ${anaSt(e).s}`]))}
+<div class="readouts">${ro('ares', 'Result')}${ro('aunc', 'Uncertainty')}${ro('aneed', 'Needs')}${ro('amine', 'Your map')}</div>
+<ul class="warns" id="warns" aria-live="polite"></ul>
+<p class="take">Every earlier choice shows up here. The sensor decides which questions you can ask. Accuracy decides whether you can trust the answer.</p>`,
+    bind: bindChoice,
+    upd() {
+      const e = A(), st = anaSt(e), [res, u, pct] = e.val(st.a), U = u || '± ' + fmtErr(st.a), lk = st.k === 'sensor', w = [];
+      this.t0 = null;                                           // restart the reveal sweep
+      $('#ares').textContent = lk ? '–' : res;
+      $('#aunc').textContent = lk || !u ? '–' : u + (pct != null ? ` (${+(pct * 100).toPrecision(2)}%)` : '');
+      $('#aneed').textContent = (e.sens.length > 2 ? 'Any sensor' : e.sens.map(SL).join(' or ')) + ' · ≤ ' + fmtErr(e.need);
+      $('#amine').textContent = fmtErr(st.a); $('#amine').style.color = errColor(st.a);
+      if (lk) w.push(['warn', `Your ${SENS[S.sensor].name} can't measure this. Go back to <button class="b" data-go="sensors">Sensors</button> and pick one that can.`]);
+      else if (st.k === 'acc') w.push(['bad', `The answer would be ${U}, too uncertain to act on. Turn on RTK or add GCPs. <button class="b" data-go="accuracy">Accuracy</button>`]);
+      else w.push(['ok', `Answer is trustworthy to about ${U}.`]);
+      $('#warns').innerHTML = w.map(([c, s]) => `<li class="${c}">${s}</li>`).join('');
+    },
+    draw(t) {
+      const e = A(), st = anaSt(e), lk = st.k !== 'ok', [res, u] = e.val(st.a), ht = e.kind === 'height';
+      if (this.t0 == null) this.t0 = t;
+      const p = RM ? 1 : clamp((t - this.t0) / 1500, 0, 1), paint = c => { if (lk) { const g = (c[0] + c[1] + c[2]) / 3; c = [g, g, g]; } return `rgb(${c.map(v => Math.round(v * 255))})`; };
+      drawGrid(50 * MS, OX, OY);
+      ctx.save(); ctx.beginPath(); ctx.rect(0, 0, OX + p * SITE.w * MS, H); ctx.clip();   // left > right reveal
+      if (e.kind === 'ortho') {
+        drawSite();
+        if (!lk) {
+          const [bx, by, bw, bh] = e.box, [x0, y0] = px(bx, by), x1 = x0 + bw * MS, yy = y0 - 8;
+          ctx.strokeStyle = C.accent; ctx.lineWidth = 2; ctx.setLineDash([6, 4]); ctx.strokeRect(x0, y0, bw * MS, bh * MS); ctx.setLineDash([]);
+          line(x0, yy, x1, yy); line(x0, yy - 4, x0, yy + 4); line(x1, yy - 4, x1, yy + 4);
+          lbl(res, (x0 + x1) / 2, yy - 8, { align: 'center', color: C.accent, weight: 500 });
+        }
+      } else {
+        for (let y = 0; y < SITE.h; y += 10) for (let x = 0; x < SITE.w; x += 10) {
+          ctx.fillStyle = paint(ht ? ramp(clamp(elev(x + 5, y + 5, e.bare), 0, 15) / 15) : idxCol(ndvi(x + 5, y + 5)));
+          ctx.fillRect(...px(x, y), 10 * MS + .5, 10 * MS + .5);
+        }
+        ctx.strokeStyle = C.muted; ctx.lineWidth = 1; ctx.strokeRect(OX, OY, SITE.w * MS, SITE.h * MS); siteLabel();
+        if (!lk) {
+          const [cx, cy] = px(...e.at); ctx.strokeStyle = C.accent; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(cx, cy, e.r * MS, 0, 7); ctx.stroke();
+          lbl(res + (u ? ' ' + u : ''), cx + e.r * MS + 6, cy + 4, { color: C.ink, weight: 500 });
+        }
+      }
+      ctx.restore();
+      if (e.kind !== 'ortho') {
+        for (let i = 0; i < 20; i++) { ctx.fillStyle = paint(ht ? ramp(i / 19) : idxCol(i / 19)); ctx.fillRect(540 + i * 10, 452, 10, 10); }
+        txt(ht ? '0' : 'stressed', 540, 478); txt(ht ? '15 m' : 'healthy', 740, 478, { align: 'right' });
+      }
+      if (lk) {
+        ctx.fillStyle = C.panel; ctx.globalAlpha = .55; ctx.fillRect(OX, OY, SITE.w * MS, SITE.h * MS); ctx.globalAlpha = 1;
+        const cx = OX + SITE.w * MS / 2, cy = OY + SITE.h * MS / 2;
+        ctx.fillStyle = C.panel; ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.fillRect(cx - 160, cy - 36, 320, 72); ctx.strokeRect(cx - 160, cy - 36, 320, 72);
+        txt('Locked: ' + st.s, cx, cy - 4, { align: 'center', color: C.ink, sans: true, size: 15, weight: 500 });
+        if (st.k === 'acc') txt('your map ≈ ' + fmtErr(st.a), cx, cy + 20, { align: 'center' });
+      }
+    }
+  }
 ];
-const READY = STEPS.filter(s => s.html);
+
+/* ---------- 3D (three.js r128, loaded on first visit to a three:true topic) ---------- */
+const vis = () => { const on = !!cur.three && P3.st === 'ok'; cv3.hidden = !on; cv.hidden = on; };
+const RAMP = [[.17, .4, .9], [.2, .7, .35], [.95, .65, .15], [.85, .2, .2]];     // blue > green > amber > red
+const ramp = t => { t = clamp(t, 0, .999) * 3; const i = t | 0, a = RAMP[i], b = RAMP[i + 1]; return a.map((v, k) => v + (b[k] - v) * (t - i)); };
+const P3 = {
+  st: 'idle', key: '',
+  load() {
+    if (this.st !== 'idle') return;
+    this.st = 'loading';
+    let gl = false; try { gl = !!document.createElement('canvas').getContext('webgl'); } catch (e) {}
+    if (!gl) return this.fail();
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+    s.integrity = 'sha512-dLxUelApnYxpLt6K2iomGngnHO83iUvZytA3YjDUCjT0HDOHKXnVYdf3hU4JjM8uEhxf9nD1/ey98U3t2vZ0qQ=='; s.crossOrigin = 'anonymous';
+    s.onload = () => this.init(); s.onerror = () => this.fail();
+    document.head.append(s);
+  },
+  fail() { this.st = 'fail'; vis(); if (cur.three) cur.upd(); },
+  init() {
+    try {
+      this.r = new THREE.WebGLRenderer({ canvas: cv3, alpha: true, antialias: true }); this.r.setPixelRatio(devicePixelRatio || 1);
+      this.scene = new THREE.Scene(); this.cam = new THREE.PerspectiveCamera(40, 1.6, 1, 2000);
+      this.tilt = new THREE.Vector3(0, 260, 330); this.top = new THREE.Vector3(0, 560, 1); this.cam.position.copy(this.tilt);
+      this.group = new THREE.Group(); this.scene.add(this.group);
+      this.pts = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ size: 2.2, vertexColors: true })); this.group.add(this.pts);
+    } catch (e) { return this.fail(); }
+    let x0 = null; cv3.style.touchAction = 'none'; cv3.style.cursor = 'grab';
+    cv3.onpointerdown = e => { x0 = e.clientX; cv3.setPointerCapture(e.pointerId); };
+    cv3.onpointermove = e => { if (x0 != null) { this.group.rotation.y += (e.clientX - x0) * .008; x0 = e.clientX; } };
+    cv3.onpointerup = cv3.onpointercancel = () => x0 = null;
+    this.drag = () => x0 != null;
+    new ResizeObserver(() => {
+      const r = cv3.getBoundingClientRect(); if (!r.width) return;
+      this.r.setSize(r.width, r.height, false); this.cam.aspect = r.width / r.height; this.cam.updateProjectionMatrix();
+    }).observe(cv3);
+    this.st = 'ok'; vis(); if (cur.three) cur.upd();
+  },
+  cloud() {                                                   // ~30k points, rebuilt only when scenario / sensor / (overlap<65) changes
+    const lid = S.sensor === 'lidar', low = !lid && S.overlap < 65, key = S.scenario + S.sensor + Math.min(S.overlap, 65);
+    if (key === this.key) return; this.key = key; this.vk = '';
+    const F = FEAT[S.scenario], pos = [], col = [], zs = [], hc = [], N = S.scenario;
+    let sd = 7; const rnd = () => (sd = sd * 16807 % 2147483647) / 2147483647;
+    const add = (x, y, z, c, g) => {
+      if (low && Math.sin(x * .05) * Math.cos(y * .07) > 1 - (65 - S.overlap) / 15) return;   // holes: spots too few photos saw
+      const v = 1 + (rnd() - .5) * .2;
+      pos.push(x - 200, z * 3, y - 125); zs.push(z); col.push(...(lid ? [g, g, g] : c).map(k => k * v)); hc.push(...ramp((z + 3) / 18));
+    };
+    const [p0, c1, c2, p1] = F.road, bz = [...Array(41).keys()].map(i => { const u = i / 40, m = 1 - u, k = [m ** 3, 3 * m * m * u, 3 * m * u * u, u ** 3]; return [0, 1].map(d => k[0] * p0[d] + k[1] * c1[d] + k[2] * c2[d] + k[3] * p1[d]); });
+    const tr = F.tree || [];
+    for (let gx = 0; gx <= 400; gx += 2) for (let gy = 0; gy <= 250; gy += 2) {          // ground grid with jitter
+      const x = gx + rnd() * 1.2 - .6, y = gy + rnd() * 1.2 - .6;
+      if (F.bldg.some(([a, b, w, h]) => x > a && x < a + w && y > b && y < b + h)) continue;
+      if (tr.some(([a, b, r]) => Math.hypot(x - a, y - b) < r) && (!lid || rnd() > .4)) continue;   // crowns hide the ground from photos; 40% of laser echoes get through
+      let z = 0, c = { site: [.62, .55, .42], farm: [.42, .55, .3], town: [.5, .55, .45] }[N], g = .45;
+      for (const [a, b, w, h, d] of F.pit || []) if (x > a && x < a + w && y > b && y < b + h) { z = -d; c = [.45, .38, .3]; }
+      for (const [a, b, r, d] of F.low || []) { const q = Math.hypot(x - a, y - b) / r; if (q < 1) z -= d * (1 - q * q); }
+      if (bz.some(([a, b]) => Math.hypot(x - a, y - b) < 5)) { c = [.5, .5, .52]; g = .3; }
+      else if (F.stress && ((x - F.stress[0]) / F.stress[2]) ** 2 + ((y - F.stress[1]) / F.stress[3]) ** 2 < 1) c = [.8, .62, .2];
+      else if (F.rows && y > F.rows[0] && y < F.rows[1]) { c = [.25, .62, .28]; g = .55; }
+      add(x, y, z, c, g);
+    }
+    for (const [a, b, w, h, ht] of F.bldg) {
+      for (let x = a; x <= a + w; x += 2.5) for (let y = b; y <= b + h; y += 2.5) add(x, y, ht, [.75, .4, .3], .75);
+      for (let t = 0; t < 2 * (w + h); t += 2.5) for (let z = 1; z < ht; z += 2.5) if (rnd() < .35) {
+        const e = t < w ? [a + t, b] : t < w + h ? [a + w, b + t - w] : t < 2 * w + h ? [a + w - (t - w - h), b + h] : [a, b + h - (t - 2 * w - h)];
+        add(e[0], e[1], z, [.8, .72, .6], .7);
+      }
+    }
+    for (const [a, b, r, ht] of tr) for (let i = 0, n = r * r * 1.3 + 40; i < n; i++) {         // crowns: upper half of an ellipsoid
+      const th = rnd() * 6.283, u = rnd(), s = Math.sqrt(1 - u * u);
+      add(a + r * s * Math.cos(th), b + r * s * Math.sin(th), ht * (.55 + .45 * u), [.2, .55, .25], .6);
+    }
+    for (const [a, b, r, ht] of F.pile || []) for (let i = 0, n = Math.PI * r * r / 5; i < n; i++) {
+      const d = r * Math.sqrt(rnd()), th = rnd() * 6.283; add(a + d * Math.cos(th), b + d * Math.sin(th), ht * (1 - d / r), [.7, .55, .35], .5);
+    }
+    const g = this.pts.geometry; g.dispose(); this.pts.geometry = new THREE.BufferGeometry();
+    this.pts.geometry.setAttribute('position', new THREE.BufferAttribute(Float32Array.from(pos), 3));
+    this.pts.geometry.setAttribute('color', new THREE.BufferAttribute(Float32Array.from(col), 3));
+    this.c0 = Float32Array.from(col); this.c1 = Float32Array.from(hc);
+  },
+  render(t) {
+    if (this.st !== 'ok' || cv3.hidden) return;
+    this.cloud();
+    const dt = Math.min(.1, (t - (this.t || t)) / 1000), v = S.view, g = this.group, k = RM ? 1 : .06, TAU = 2 * Math.PI; this.t = t;
+    if (v === 'cloud' && !RM && !this.drag()) g.rotation.y += .1 * dt;
+    if (v === 'ortho') g.rotation.y += (Math.round(g.rotation.y / TAU) * TAU - g.rotation.y) * k;   // north-up
+    g.scale.y += ((v === 'ortho' ? .01 : 1) - g.scale.y) * k;
+    this.cam.position.lerp(v === 'ortho' ? this.top : this.tilt, k); this.cam.lookAt(0, 0, 0);
+    if (this.vk !== v) {                                       // height map = same points, second color array
+      this.vk = v; const a = this.pts.geometry.attributes.color; a.array.set(v === 'height' ? this.c1 : this.c0); a.needsUpdate = true;
+    }
+    this.r.render(this.scene, this.cam);
+  }
+};
 
 /* ---------- navigation ---------- */
 let cur;
 $('#steps').innerHTML = STEPS.map((s, i) =>
-  `<button class="pill" data-id="${s.id}" ${s.html ? '' : 'disabled title="Coming soon"'}><span class="n">${String(i + 1).padStart(2, '0')}</span>${s.t}</button>`).join('');
-$('#steps').onclick = e => { const b = e.target.closest('.pill'); if (b && !b.disabled) go(b.dataset.id); };
+  `<button class="pill" data-id="${s.id}"><span class="n">${String(i + 1).padStart(2, '0')}</span>${s.t}</button>`).join('');
+$('#steps').onclick = e => { const b = e.target.closest('.pill'); if (b) go(b.dataset.id); };
 
 function go(id, scroll) {
-  cur = READY.find(s => s.id === id) || READY[0];
+  cur = STEPS.find(s => s.id === id) || STEPS[0];
   history.replaceState(null, '', '#' + cur.id);
   $('#text').innerHTML = `<p class="eyebrow">Topic ${STEPS.indexOf(cur) + 1} of ${STEPS.length} · ${cur.t}</p>` + cur.html();
-  document.querySelectorAll('.term').forEach(el => { el.tabIndex = 0; el.dataset.def = G[el.dataset.t]; });
   cur.bind?.(); cur.upd();
+  document.querySelectorAll('.term').forEach(el => { el.tabIndex = 0; el.dataset.def = G[el.dataset.t]; }); // after upd: warnings can hold terms
   $('#caption').textContent = cur.cap;
-  cv.setAttribute('aria-label', cur.alt);
-  cv.classList.toggle('drag', !!cur.drag);
+  cv.setAttribute('aria-label', cur.alt); cv3.setAttribute('aria-label', cur.alt);
+  cv.classList.toggle('drag', !!cur.drag); cv.style.cursor = '';
   document.querySelectorAll('.pill').forEach(p => p.dataset.id === cur.id ? p.setAttribute('aria-current', 'step') : p.removeAttribute('aria-current'));
-  const i = READY.indexOf(cur);
-  $('#prev').disabled = i === 0; $('#next').disabled = i === READY.length - 1;
-  $('#pos').textContent = `${i + 1} / ${READY.length} built`;
+  const i = STEPS.indexOf(cur);
+  $('#prev').disabled = i === 0; $('#next').disabled = i === STEPS.length - 1;
+  $('#pos').textContent = `${i + 1} / ${STEPS.length}`;
   document.querySelector('.pill[aria-current]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  if (cur.three) P3.load();
+  vis();
   if (scroll) scrollTo({ top: 0, behavior: RM ? 'auto' : 'smooth' });
 }
-$('#prev').onclick = () => go(READY[READY.indexOf(cur) - 1].id, true);
-$('#next').onclick = () => go(READY[READY.indexOf(cur) + 1].id, true);
+$('#text').addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) go(b.dataset.go, true); });
+addEventListener('hashchange', () => { if (location.hash.slice(1) !== cur.id) go(location.hash.slice(1)); });
+document.addEventListener('click', e => e.target.closest('.term')?.focus());   // iOS: tap doesn't focus a tabindex span
+$('#prev').onclick = () => go(STEPS[STEPS.indexOf(cur) - 1].id, true);
+$('#next').onclick = () => go(STEPS[STEPS.indexOf(cur) + 1].id, true);
 
 /* ---------- canvas plumbing ---------- */
 function fit() {
@@ -523,7 +1074,7 @@ cv.addEventListener('pointerup', () => dragI = -1);
 cv.addEventListener('pointercancel', () => dragI = -1);
 cv.addEventListener('dblclick', e => cur.dbl?.(...pos(e)));
 
-function frame(t) { ctx.clearRect(0, 0, W, H); cur.draw(t); requestAnimationFrame(frame); }
+function frame(t) { ctx.clearRect(0, 0, W, H); cur.draw(t); if (cur.three) P3.render(t); requestAnimationFrame(frame); }
 
 readColors();
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readColors);
@@ -531,6 +1082,7 @@ new ResizeObserver(fit).observe(cv);
 errField();
 go(location.hash.slice(1));
 requestAnimationFrame(frame);
+if (location.search.includes('test')) selfTest();
 </script>
 </body>
 </html>
