@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UAV Mapping 101</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f5f7;--panel:#fff;--ink:#17202b;--muted:#5d6876;--line:#d9e0e7;--grid:#e8edf2;--accent:#0b63c5;--accent-soft:rgba(11,99,197,.08);--ok:#1b7f3b;--warn:#965a00;--bad:#c42b2b;--site:#b9c4cf}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0e1319;--panel:#151c24;--ink:#e3e9ef;--muted:#8d99a6;--line:#27313d;--grid:#1b242e;--accent:#4ea1ff;--accent-soft:rgba(78,161,255,.1);--ok:#4cc27a;--warn:#e0a03a;--bad:#ff6b6b;--site:#3d4957}}
+:root[data-theme=dark]{--bg:#0e1319;--panel:#151c24;--ink:#e3e9ef;--muted:#8d99a6;--line:#27313d;--grid:#1b242e;--accent:#4ea1ff;--accent-soft:rgba(78,161,255,.1);--ok:#4cc27a;--warn:#e0a03a;--bad:#ff6b6b;--site:#3d4957}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 "IBM Plex Sans",system-ui,sans-serif}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;background:var(--panel);border-bottom:1px solid var(--line)}
+h1{font-size:17px;margin:0;font-weight:600}
+.sub{margin:0;color:var(--muted);font-size:13px}
+.proto{font:500 11px "IBM Plex Mono",monospace;color:var(--warn);border:1px solid currentColor;padding:2px 6px;border-radius:3px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.steps{display:flex;gap:6px;overflow-x:auto;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--line)}
+.pill{flex:none;font:inherit;font-size:13px;color:var(--ink);background:none;border:1px solid var(--line);border-radius:4px;padding:5px 10px;cursor:pointer}
+.pill .n{font-family:"IBM Plex Mono",monospace;color:var(--muted);margin-right:4px}
+.pill[aria-current=step]{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.pill:disabled{opacity:.4;cursor:not-allowed}
+.wrap{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:20px;max-width:1280px;margin:0 auto;padding:20px 16px}
+.eyebrow{font:500 11px "IBM Plex Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 6px}
+h2{font-size:24px;line-height:1.2;margin:0 0 12px;font-weight:600}
+.text p{margin:0 0 12px}
+.try{margin:0 0 16px;padding:10px 12px 10px 28px;background:var(--panel);border:1px solid var(--line);border-radius:6px;font-size:14px}
+.try li{margin:2px 0}
+.ctl{margin:14px 0}
+.ctl label{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:4px}
+.ctl label b{font:500 13px "IBM Plex Mono",monospace;color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.readouts{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin:16px 0}
+.ro{background:var(--panel);padding:8px 10px;font:inherit;color:inherit;text-align:left;border:0}
+button.ro{cursor:pointer}
+button.ro:hover{background:var(--accent-soft)}
+.ro span{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.ro b{font:500 17px "IBM Plex Mono",monospace}
+.warns{list-style:none;padding:0;margin:0 0 12px;font-size:13px}
+.warns li{padding:6px 10px;border-left:3px solid var(--warn);background:var(--panel);margin-bottom:4px}
+.warns li.bad{border-color:var(--bad)}
+.warns li.ok{border-color:var(--ok)}
+.take{border-left:3px solid var(--accent);padding:8px 12px;background:var(--accent-soft);font-size:14px;margin-top:16px}
+.stagebox{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px;align-self:start;position:sticky;top:12px}
+canvas{display:block;width:100%;aspect-ratio:8/5}
+canvas.drag{touch-action:none;cursor:crosshair}
+.caption{margin:8px 2px 0;font-size:13px;color:var(--muted)}
+.btns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.b{font:inherit;font-size:13px;padding:6px 12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:4px;cursor:pointer}
+.b:hover:not(:disabled){border-color:var(--accent)}
+.b:disabled{opacity:.4;cursor:default}
+.b.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.switch{display:inline-flex;align-items:center;gap:10px;font:inherit;font-size:14px;background:none;border:0;color:var(--ink);cursor:pointer;padding:4px 0}
+.switch span{width:38px;height:22px;border-radius:11px;background:var(--line);position:relative;transition:background .2s}
+.switch span::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:var(--panel);transition:left .2s}
+.switch[aria-checked=true] span{background:var(--accent)}
+.switch[aria-checked=true] span::after{left:19px}
+.term{border-bottom:1px dotted var(--accent);cursor:help;position:relative}
+.term:hover::after,.term:focus::after{content:attr(data-def);position:absolute;left:0;top:1.7em;width:max-content;max-width:min(260px,70vw);background:var(--ink);color:var(--bg);font-size:13px;line-height:1.4;font-weight:400;padding:8px 10px;border-radius:4px;z-index:5}
+.pager{display:flex;justify-content:space-between;align-items:center;gap:12px;max-width:1280px;margin:0 auto;padding:0 16px 24px}
+.pager span{font-size:13px;color:var(--muted)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:860px){.wrap{grid-template-columns:1fr}.stagebox{order:-1;position:static}h2{font-size:21px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div><h1>UAV Mapping 101</h1><p class="sub">How a drone turns photos into an accurate map</p></div>
+  <span class="proto">Prototype · 4 of 10 topics</span>
+</header>
+<nav class="steps" id="steps" aria-label="Topics"></nav>
+<main class="wrap">
+  <section class="text" id="text"></section>
+  <section class="stagebox">
+    <canvas id="cv" role="img"></canvas>
+    <p class="caption" id="caption"></p>
+  </section>
+</main>
+<footer class="pager">
+  <button class="b" id="prev">← Back</button>
+  <span id="pos"></span>
+  <button class="b primary" id="next">Next →</button>
+</footer>
+<script>
+const $ = s => document.querySelector(s);
+const cv = $('#cv'), ctx = cv.getContext('2d');
+const W = 800, H = 500;                       // logical canvas size
+const OX = 80, OY = 50, MS = 1.6;             // site map: offset + px per meter
+const SITE = { w: 400, h: 250 };              // site size, meters
+const CAM = { sw: 13.2, f: 8.8, iw: 5472, ih: 3648 }; // 1" sensor, 8.8 mm lens (Phantom 4 RTK class)
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Every viewer choice lives here, so later topics react to earlier ones.
+const S = { alt: 100, overlap: 75, rtk: false, gcps: [], amp: 2.5, trail: [], lastTrail: 0, shown: null, err: null };
+
+const G = {
+  gsd: 'Ground Sampling Distance: how much ground one pixel covers. 2 cm/px means each pixel is a 2 × 2 cm patch. Smaller = sharper.',
+  overlap: 'How much of each photo also appears in the next one. Mapping usually needs 70–80%.',
+  gnss: 'Global Navigation Satellite System: GPS (USA), Galileo (EU), GLONASS (Russia), BeiDou (China). Your phone uses it too.',
+  rtk: 'Real-Time Kinematic: a base station on a known point sends live corrections, turning meter-level positions into centimeter-level ones.',
+  gcp: 'Ground Control Point: a marked target on the ground whose coordinates a surveyor measured precisely.',
+  bm: 'Benchmark: a permanent survey marker (often a concrete pillar) with officially known coordinates and height.',
+  icp: 'Checkpoints: surveyed targets left OUT of processing, used only to test how accurate the finished map is.',
+  rmse: 'Root Mean Square Error: roughly the "typical" error across all checkpoints. Smaller is better.'
+};
+const term = (k, label) => `<span class="term" data-t="${k}">${label}</span>`;
+const ro = (id, label) => `<div class="ro"><span>${label}</span><b id="${id}">–</b></div>`;
+const fmtErr = m => m < 1 ? Math.round(m * 100) + ' cm' : m.toFixed(1) + ' m';
+const fmtTime = s => { s = Math.round(s); return Math.floor(s / 60) + ' min ' + String(s % 60).padStart(2, '0') + ' s'; };
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const px = (x, y) => [OX + x * MS, OY + y * MS];
+
+/* ---------- colors + canvas helpers ---------- */
+const C = {};
+function readColors() {
+  const cs = getComputedStyle(document.documentElement);
+  for (const k of ['panel', 'ink', 'muted', 'line', 'grid', 'accent', 'ok', 'warn', 'bad', 'site']) C[k] = cs.getPropertyValue('--' + k).trim();
+}
+function txt(s, x, y, o = {}) {
+  ctx.font = `${o.weight || 400} ${o.size || 11}px ${o.sans ? '"IBM Plex Sans",sans-serif' : '"IBM Plex Mono",monospace'}`;
+  ctx.fillStyle = o.color || C.muted; ctx.textAlign = o.align || 'left'; ctx.fillText(s, x, y);
+}
+function line(x1, y1, x2, y2) { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
+function drawGrid(step, ox, oy) {
+  ctx.strokeStyle = C.grid; ctx.lineWidth = 1; ctx.setLineDash([]); ctx.beginPath();
+  for (let x = ox % step; x <= W; x += step) { ctx.moveTo(x, 0); ctx.lineTo(x, H); }
+  for (let y = oy % step; y <= H; y += step) { ctx.moveTo(0, y); ctx.lineTo(W, y); }
+  ctx.stroke();
+}
+function drawSite() {
+  ctx.lineCap = 'round'; ctx.strokeStyle = C.site; ctx.lineWidth = 10 * MS; ctx.globalAlpha = .7;
+  ctx.beginPath(); ctx.moveTo(...px(-20, 178)); ctx.bezierCurveTo(...px(120, 205), ...px(260, 105), ...px(420, 125)); ctx.stroke();
+  ctx.fillStyle = C.site;
+  for (const [x, y, w, h] of [[40, 30, 50, 35], [105, 40, 30, 45], [300, 178, 60, 40], [225, 185, 45, 30]]) ctx.fillRect(...px(x, y), w * MS, h * MS);
+  for (const [x, y, r] of [[250, 60, 18], [290, 74, 12], [160, 115, 14]]) { ctx.beginPath(); ctx.arc(...px(x, y), r * MS, 0, 7); ctx.fill(); }
+  ctx.globalAlpha = 1; ctx.lineCap = 'butt';
+  ctx.strokeStyle = C.muted; ctx.lineWidth = 1; ctx.setLineDash([6, 4]);
+  ctx.strokeRect(OX, OY, SITE.w * MS, SITE.h * MS); ctx.setLineDash([]);
+  txt('SITE 400 × 250 m', OX, OY - 8);
+}
+function drone(x, y) {
+  ctx.strokeStyle = C.ink; ctx.lineWidth = 2;
+  line(x - 7, y - 7, x + 7, y + 7); line(x - 7, y + 7, x + 7, y - 7);
+  ctx.lineWidth = 1.2;
+  for (const [dx, dy] of [[-7, -7], [7, -7], [-7, 7], [7, 7]]) { ctx.beginPath(); ctx.arc(x + dx, y + dy, 4, 0, 7); ctx.stroke(); }
+  ctx.fillStyle = C.ink; ctx.fillRect(x - 3, y - 3, 6, 6);
+}
+function arrow(x, y, len, ang, col) {
+  const ex = x + Math.cos(ang) * len, ey = y + Math.sin(ang) * len;
+  ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = 1.5; line(x, y, ex, ey);
+  ctx.beginPath(); ctx.moveTo(ex, ey);
+  ctx.lineTo(ex - 5 * Math.cos(ang - .5), ey - 5 * Math.sin(ang - .5));
+  ctx.lineTo(ex - 5 * Math.cos(ang + .5), ey - 5 * Math.sin(ang + .5)); ctx.fill();
+}
+
+/* ---------- flight plan math ---------- */
+let fCache = {};
+function flight() {
+  const key = S.alt + '/' + S.overlap;
+  if (fCache.key === key) return fCache;
+  const ov = S.overlap / 100;
+  const gsd = CAM.sw * S.alt * 100 / (CAM.f * CAM.iw);       // cm per pixel
+  const fw = gsd * CAM.iw / 100, fh = gsd * CAM.ih / 100;     // footprint across / along track, m
+  const sp = fw * (1 - ov), st = fh * (1 - ov);               // line spacing, photo spacing
+  const lines = Math.ceil(SITE.h / sp) + 1, per = Math.ceil(SITE.w / st) + 1;
+  const y0 = (SITE.h - (lines - 1) * sp) / 2, x0 = (SITE.w - (per - 1) * st) / 2, photos = [];
+  for (let l = 0; l < lines; l++) for (let i = 0; i < per; i++) {
+    const j = l % 2 ? per - 1 - i : i;                        // serpentine "lawnmower"
+    photos.push({ x: x0 + j * st, y: y0 + l * sp });
+  }
+  const speed = Math.min(12, st / 2);                         // camera can't fire faster than every ~2 s
+  const time = (lines * (per - 1) * st + (lines - 1) * sp) / speed + (lines - 1) * 8; // + 8 s per turn
+  return fCache = { key, gsd, fw, fh, sp, st, lines, per, photos, time };
+}
+
+/* ---------- GCP / RTK error model ---------- */
+// ponytail: toy model (shift + scale/rotation + slight bend), not a bundle adjustment. Tuned so the lessons read right.
+const det3 = m => m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
+function fitAffine(obs) {
+  const M = [[0, 0, 0], [0, 0, 0], [0, 0, 0]], b = [[0, 0, 0], [0, 0, 0]];
+  for (const p of obs) {
+    const r = [1, p.u, p.v];
+    for (let i = 0; i < 3; i++) { for (let j = 0; j < 3; j++) M[i][j] += r[i] * r[j]; b[0][i] += r[i] * p.o[0]; b[1][i] += r[i] * p.o[1]; }
+  }
+  const D = det3(M);
+  if (Math.abs(D) < 1e-7) return null;                        // collinear GCPs: can't solve tilt
+  return b.map(bb => [0, 1, 2].map(c => det3(M.map((row, i) => row.map((x, j) => j === c ? bb[i] : x))) / D));
+}
+function errField() {
+  const k = S.rtk ? 0.02 : 1;
+  const uv = (x, y) => [(x - 200) / 200, (y - 125) / 200];
+  const E0 = (u, v) => [k * (2.2 + 1.4 * u - 0.8 * v + 0.06 * (u * u - .3)), k * (-1.5 + 0.8 * u + 1.4 * v + 0.06 * (v * v - .3) + 0.04 * u * v)];
+  const obs = S.gcps.map((g, i) => {                          // GCP survey has ~2 cm noise of its own
+    const [u, v] = uv(g.x, g.y), e = E0(u, v);
+    return { u, v, o: [e[0] + .02 * Math.sin(i * 2.1 + 1), e[1] + .02 * Math.cos(i * 1.7 + .5)] };
+  });
+  let fit = obs.length >= 3 ? fitAffine(obs) : null;
+  if (!fit && obs.length) {                                   // 1–2 pins: only the shift is fixed
+    const m = i => obs.reduce((s, p) => s + p.o[i], 0) / obs.length;
+    fit = [[m(0), 0, 0], [m(1), 0, 0]];
+  }
+  const cells = []; let sq = 0, max = 0;
+  for (let y = 12.5; y < SITE.h; y += 25) for (let x = 12.5; x < SITE.w; x += 25) {
+    const [u, v] = uv(x, y), e = E0(u, v);
+    if (fit) { e[0] -= fit[0][0] + fit[0][1] * u + fit[0][2] * v; e[1] -= fit[1][0] + fit[1][1] * u + fit[1][2] * v; }
+    const m = Math.hypot(e[0], e[1], .02);
+    cells.push({ x, y, ex: e[0], ey: e[1], m }); sq += m * m; max = Math.max(max, m);
+  }
+  S.err = { cells, rmse: Math.sqrt(sq / cells.length), max };
+}
+const errColor = m => m < .05 ? C.ok : m < .3 ? C.warn : C.bad;
+const finalAcc = () => Math.hypot(S.err.rmse, 1.5 * flight().gsd / 100); // map can't beat ~1.5 × GSD
+const USES = [['Engineering survey, cut & fill', .05], ['Stockpile volumes', .10], ['Construction progress', .30], ['Visual overview only', 3]];
+
+/* ---------- shared RTK switch ---------- */
+const rtkSwitch = () => `<button class="switch" role="switch" aria-checked="${S.rtk}" data-rtk><span></span>${term('rtk', 'RTK')} corrections</button>`;
+function bindRtk() {
+  document.querySelectorAll('[data-rtk]').forEach(b => b.onclick = e => {
+    if (e.target.closest('.term')) return;
+    S.rtk = !S.rtk; b.setAttribute('aria-checked', S.rtk); errField(); cur.upd();
+  });
+}
+
+/* ---------- topics ---------- */
+const STEPS = [
+  { id: 'mission', t: 'Mission' },
+  { id: 'uav', t: 'UAV types' },
+  { id: 'sensors', t: 'Sensors' },
+  {
+    id: 'flight', t: 'Flight plan',
+    alt: 'Top-down map of the site with the drone flying parallel lines and photo footprints appearing.',
+    cap: 'Each rectangle is one photo\'s footprint on the ground. Darker blue means more photos see that spot.',
+    html: () => `<h2>Planning the flight</h2>
+<p>A mapping drone doesn't wander around. It flies a <b>lawnmower pattern</b> of straight lines and takes a photo every few meters. Later, software stitches the photos together like a jigsaw puzzle. That only works if each photo shares a large part of its view with its neighbors. That shared part is the ${term('overlap', 'overlap')}.</p>
+<ul class="try"><li>Lower the <b>altitude</b>: photos get sharper (smaller ${term('gsd', 'GSD')}), but you need far more of them.</li><li>Push <b>overlap</b> below 65% and watch the warning.</li></ul>
+<div class="ctl"><label for="alt">Altitude <b id="altv"></b></label><input id="alt" type="range" min="40" max="150" step="5"></div>
+<div class="ctl"><label for="ov">Overlap <b id="ovv"></b></label><input id="ov" type="range" min="50" max="90" step="5"></div>
+<div class="readouts">${ro('gsd', 'Detail (GSD)')}${ro('nph', 'Photos')}${ro('ftime', 'Flight time')}${ro('batt', 'Batteries')}</div>
+<ul class="warns" id="warns"></ul>
+<p class="take">Every flight plan is a trade-off. Sharper detail costs flight time, batteries, and processing hours.</p>`,
+    bind() {
+      $('#alt').value = S.alt; $('#ov').value = S.overlap;
+      $('#alt').oninput = e => { S.alt = +e.target.value; this.upd(); };
+      $('#ov').oninput = e => { S.overlap = +e.target.value; this.upd(); };
+    },
+    upd() {
+      const f = flight(), batt = Math.ceil(f.time / (22 * 60)), w = [];
+      $('#altv').textContent = S.alt + ' m'; $('#ovv').textContent = S.overlap + '%';
+      $('#gsd').textContent = f.gsd.toFixed(1) + ' cm/px';
+      $('#nph').textContent = f.photos.length.toLocaleString('en');
+      $('#ftime').textContent = fmtTime(f.time);
+      $('#batt').textContent = batt;
+      if (S.overlap < 65) w.push(['bad', 'Overlap too low. The software may fail to match photos and leave holes in the map.']);
+      if (S.alt > 120) w.push(['warn', 'Above 120 m. Most countries require a special permit.']);
+      if (batt > 1) w.push(['warn', `Needs ${batt} batteries. The drone has to land and swap mid-mission.`]);
+      if (f.photos.length > 1500) w.push(['warn', 'Over 1,500 photos. Processing will take hours.']);
+      $('#warns').innerHTML = w.map(([c, s]) => `<li class="${c}">${s}</li>`).join('');
+    },
+    draw(t) {
+      const f = flight(), N = f.photos.length, ov = S.overlap / 100;
+      const dur = clamp(N * 40, 5000, 14000), tt = RM ? dur : t % (dur + 1500);
+      const k = Math.min(1, tt / dur) * (N - 1), i = Math.floor(k), a = f.photos[i], b = f.photos[Math.min(N - 1, i + 1)];
+      const rw = f.fh * MS, rh = f.fw * MS;
+      drawGrid(50 * MS, OX, OY);
+      ctx.fillStyle = C.accent; ctx.globalAlpha = .45 * (1 - ov) ** 1.6;
+      for (let j = 0; j <= i; j++) { const [x, y] = px(f.photos[j].x, f.photos[j].y); ctx.fillRect(x - rw / 2, y - rh / 2, rw, rh); }
+      ctx.globalAlpha = 1;
+      drawSite();
+      ctx.strokeStyle = C.accent; ctx.lineWidth = 1; ctx.globalAlpha = .6; ctx.setLineDash([3, 4]);
+      ctx.beginPath(); f.photos.forEach((p, j) => ctx[j ? 'lineTo' : 'moveTo'](...px(p.x, p.y))); ctx.stroke();
+      ctx.setLineDash([]); ctx.globalAlpha = 1;
+      const [cx, cy] = px(a.x, a.y); ctx.lineWidth = 1.5; ctx.strokeRect(cx - rw / 2, cy - rh / 2, rw, rh);
+      const u = k - i; drone(...px(a.x + (b.x - a.x) * u, a.y + (b.y - a.y) * u));
+      txt(`${f.lines} lines · photo every ${f.st.toFixed(0)} m · lines ${f.sp.toFixed(0)} m apart`, OX, H - 12);
+    }
+  },
+  {
+    id: 'rtk', t: 'RTK',
+    alt: 'Close-up of a road and building. A blue outline shows where the map places them, offset from the real features unless RTK is on.',
+    cap: 'Grey = the real world. Blue dashed = where your map puts it. The circle shows how unsure the drone is about its own position.',
+    html: () => `<h2>Knowing where each photo was taken</h2>
+<p>Every photo gets tagged with the drone's position from satellites (${term('gnss', 'GNSS')}). Regular GPS is only accurate to a few meters, so the map can look perfect and still sit in the wrong place.</p>
+<p>${term('rtk', 'RTK')} fixes that. A <b>base station</b> set up on a known point compares its satellite reading with its true position, then radios the difference to the drone live. Meters of error shrink to centimeters.</p>
+<ul class="try"><li>Toggle RTK and compare the blue map with the grey real-world features.</li><li>Watch the drone's uncertainty circle.</li></ul>
+<div class="ctl">${rtkSwitch()}</div>
+<div class="readouts">${ro('mode', 'Position mode')}${ro('acc', 'Accuracy')}${ro('size', 'Error about the size of')}${ro('link', 'Base station link')}</div>
+<p class="take">GPS alone gives you a map in roughly the right place. RTK puts it exactly where it belongs.</p>`,
+    bind: bindRtk,
+    upd() {
+      $('#mode').textContent = S.rtk ? 'RTK fixed' : 'GPS only';
+      $('#acc').textContent = S.rtk ? '± 2 cm' : '± 2.5 m';
+      $('#size').textContent = S.rtk ? 'a coin' : 'a car';
+      $('#link').textContent = S.rtk ? 'connected' : 'off';
+    },
+    draw(t) {
+      const RS = 20, RX = 400, RY = 280;                      // zoomed view: 20 px per meter
+      S.amp += ((S.rtk ? .02 : 2.5) - S.amp) * .06;
+      const a = S.amp, ts = RM ? 0 : t;
+      const e = [a * (.75 * Math.sin(ts * .0006) + .3 * Math.sin(ts * .0013 + 1)), a * (.6 * Math.cos(ts * .0005) + .3 * Math.sin(ts * .0011 + 2))];
+      const rp = (x, y, o) => [RX + (x + o[0]) * RS, RY + (y + o[1]) * RS];
+      drawGrid(5 * RS, RX, RY);
+      const scene = (col, o, dash) => {
+        ctx.strokeStyle = col; ctx.lineWidth = 1.6; ctx.setLineDash(dash);
+        line(...rp(-25, 3, o), ...rp(25, 3, o)); line(...rp(-25, 9, o), ...rp(25, 9, o));
+        ctx.strokeRect(...rp(-15, -9, o), 9 * RS, 8 * RS);
+        for (const [x, y, r] of [[5, -4, .7], [12, -8, 1.6], [16, -4, 1.2]]) { ctx.beginPath(); ctx.arc(...rp(x, y, o), r * RS, 0, 7); ctx.stroke(); }
+        ctx.setLineDash([]);
+      };
+      scene(C.muted, [0, 0], []);
+      scene(C.accent, e, [6, 4]);
+      txt('REAL BUILDING', ...rp(-15, -9.6, [0, 0]));
+      txt('ON YOUR MAP', ...rp(-15, -.4, e), { color: C.accent });
+      // drone: true spot vs reported spot
+      const D = [-1, -5];
+      if (t - S.lastTrail > 90) { S.trail.push(e.slice()); if (S.trail.length > 30) S.trail.shift(); S.lastTrail = t; }
+      ctx.fillStyle = C.accent; ctx.globalAlpha = .25;
+      for (const p of S.trail) { ctx.beginPath(); ctx.arc(...rp(D[0], D[1], p), 2, 0, 7); ctx.fill(); }
+      ctx.globalAlpha = 1;
+      const [qx, qy] = rp(D[0], D[1], e);
+      ctx.strokeStyle = C.accent; ctx.lineWidth = 1; ctx.setLineDash([4, 3]);
+      ctx.beginPath(); ctx.arc(qx, qy, Math.max(4, a * RS), 0, 7); ctx.stroke(); ctx.setLineDash([]);
+      drone(...rp(D[0], D[1], [0, 0]));
+      ctx.fillStyle = C.accent; ctx.beginPath(); ctx.arc(qx, qy, 3.5, 0, 7); ctx.fill();
+      // scale bar
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 2; line(20, H - 20, 20 + 5 * RS, H - 20); txt('5 m', 20, H - 28, { color: C.ink });
+      // inset: satellites, base station, drone
+      const x0 = 548, y0 = 14, iw = 236, ih = 152, vis = clamp(1 - (a - .02) / 2.48, 0, 1);
+      ctx.fillStyle = C.panel; ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.fillRect(x0, y0, iw, ih); ctx.strokeRect(x0, y0, iw, ih);
+      const sats = [[578, 40], [666, 30], [756, 44]], dr = [700, 108], base = [588, 132];
+      ctx.strokeStyle = C.muted; ctx.globalAlpha = .45; ctx.setLineDash([2, 3]);
+      for (const s of sats) { line(...s, ...dr); line(...s, ...base); }
+      ctx.setLineDash([]); ctx.globalAlpha = 1;
+      for (const [sx, sy] of sats) { ctx.fillStyle = C.ink; ctx.fillRect(sx - 3, sy - 2, 6, 4); ctx.strokeStyle = C.ink; line(sx - 9, sy, sx + 9, sy); }
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 1.2;
+      line(base[0], base[1] - 8, base[0] - 8, base[1] + 14); line(base[0], base[1] - 8, base[0] + 8, base[1] + 14); line(base[0], base[1] - 8, base[0], base[1] + 14);
+      ctx.beginPath(); ctx.arc(base[0], base[1] - 11, 3, 0, 7); ctx.stroke();
+      if (vis > .02) {
+        ctx.globalAlpha = vis; ctx.strokeStyle = C.accent; ctx.lineWidth = 1.5; line(base[0], base[1] - 11, ...dr);
+        ctx.fillStyle = C.accent;
+        for (let n = 0; n < 3; n++) {
+          const s = ((ts / 900) + n / 3) % 1;
+          ctx.beginPath(); ctx.arc(base[0] + (dr[0] - base[0]) * s, base[1] - 11 + (dr[1] - base[1] + 11) * s, 3, 0, 7); ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+      }
+      ctx.save(); ctx.translate(...dr); ctx.scale(.7, .7); drone(0, 0); ctx.restore();
+      txt('satellites', 666, 52, { align: 'center' });
+      txt('drone', 714, 112);
+      txt('RTK base', base[0] + 14, base[1] + 14);
+      if (vis > .5) txt('corrections', 646, 128, { color: C.accent, align: 'center' });
+    }
+  },
+  {
+    id: 'gcp', t: 'Benchmark & GCPs', drag: true,
+    alt: 'Site map with an error arrow in each cell. The viewer places ground control points that pull the errors down.',
+    cap: 'Arrows show which way and how far the map is off (exaggerated). Green under 5 cm · amber under 30 cm · red over 30 cm. BM = benchmark.',
+    html: () => `<h2>Pinning the map to the ground</h2>
+<p>${term('gcp', 'GCPs')} are marked targets laid out on the ground before the flight. A surveyor measures each one precisely, starting from a ${term('bm', 'benchmark')}, a survey marker whose coordinates are already officially known.</p>
+<p>During processing, the software <b>pins</b> the map to these targets, like pinning a poster flat to a wall.</p>
+<ul class="try"><li><b>Click</b> the map to place a GCP, <b>drag</b> to move it, <b>double-click</b> to remove it.</li><li>Bunch 4 GCPs in one corner, then spread them around the edges.</li><li>With RTK on, how few do you still need?</li></ul>
+<div class="btns"><button class="b" data-p="clear">Clear</button><button class="b" data-p="one">1 GCP</button><button class="b" data-p="bunch">Bunched</button><button class="b" data-p="spread">Spread out</button></div>
+<div class="ctl">${rtkSwitch()}</div>
+<div class="readouts">${ro('ng', 'GCPs placed')}${ro('rmse', 'Average error')}${ro('worst', 'Worst spot')}${ro('rtks', 'RTK')}</div>
+<ul class="warns" id="warns"></ul>
+<p class="take">Put GCPs around the edges plus one in the middle. A single pin fixes the shift, but the map can still stretch or turn around it.</p>`,
+    presets: {
+      clear: [], one: [{ x: 30, y: 30 }],
+      bunch: [{ x: 30, y: 25 }, { x: 70, y: 32 }, { x: 35, y: 62 }, { x: 75, y: 68 }],
+      spread: [{ x: 20, y: 20 }, { x: 380, y: 20 }, { x: 20, y: 230 }, { x: 380, y: 230 }, { x: 200, y: 125 }]
+    },
+    bind() {
+      bindRtk();
+      document.querySelectorAll('[data-p]').forEach(b => b.onclick = () => { S.gcps = this.presets[b.dataset.p].map(p => ({ ...p })); errField(); this.upd(); });
+    },
+    upd() {
+      const n = S.gcps.length, { rmse, max } = S.err, w = [];
+      $('#ng').textContent = n + ' / 8';
+      $('#rmse').textContent = fmtErr(rmse); $('#rmse').style.color = errColor(rmse);
+      $('#worst').textContent = fmtErr(max); $('#worst').style.color = errColor(max);
+      $('#rtks').textContent = S.rtk ? 'on' : 'off';
+      if (!n && !S.rtk) w.push(['bad', 'No GCPs and no RTK. The whole map floats and can be off by meters.']);
+      if (!n && S.rtk) w.push(['ok', 'RTK alone gets close. Surveyors still add a few GCPs or checkpoints to prove it.']);
+      if (n && n < 3 && max > .05) w.push(['warn', 'One or two pins fix the shift, but the map can still stretch or turn around them.']);
+      if (n >= 3 && max > .1) w.push(['warn', 'Part of the site is far from any pin. Spread the GCPs out.']);
+      if (n >= 3 && max <= .1) w.push(['ok', 'Well pinned. The whole site is within a few centimeters.']);
+      $('#warns').innerHTML = w.map(([c, s]) => `<li class="${c}">${s}</li>`).join('');
+    },
+    hit(lx, ly) { return S.gcps.findIndex(g => { const [x, y] = px(g.x, g.y); return Math.hypot(x - lx, y - ly) < 12; }); },
+    move(lx, ly, i) { S.gcps[i] = { x: clamp((lx - OX) / MS, 0, SITE.w), y: clamp((ly - OY) / MS, 0, SITE.h) }; errField(); this.upd(); },
+    down(lx, ly) {
+      let i = this.hit(lx, ly);
+      if (i < 0) {
+        const x = (lx - OX) / MS, y = (ly - OY) / MS;
+        if (x < 0 || y < 0 || x > SITE.w || y > SITE.h || S.gcps.length >= 8) return -1;
+        S.gcps.push({ x, y }); i = S.gcps.length - 1; errField(); this.upd();
+      }
+      return i;
+    },
+    dbl(lx, ly) { const i = this.hit(lx, ly); if (i >= 0) { S.gcps.splice(i, 1); errField(); this.upd(); } },
+    draw() {
+      const cs = 25 * MS;
+      drawGrid(50 * MS, OX, OY);
+      for (const c of S.err.cells) {
+        const [x, y] = px(c.x, c.y); ctx.fillStyle = errColor(c.m); ctx.globalAlpha = .14;
+        ctx.fillRect(x - cs / 2, y - cs / 2, cs, cs);
+      }
+      ctx.globalAlpha = 1;
+      drawSite();
+      for (const c of S.err.cells) {
+        const [x, y] = px(c.x, c.y), col = errColor(c.m);
+        if (c.m < .05) { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, y, 2, 0, 7); ctx.fill(); }
+        else arrow(x, y, Math.min(24, 6 + Math.log10(c.m / .05) * 10), Math.atan2(c.ey, c.ex), col);
+      }
+      const [bx, by] = px(-25, 262);
+      ctx.strokeStyle = C.muted; ctx.globalAlpha = .5; ctx.setLineDash([2, 4]); ctx.lineWidth = 1;
+      for (const g of S.gcps) line(bx, by, ...px(g.x, g.y));
+      ctx.setLineDash([]); ctx.globalAlpha = 1;
+      ctx.fillStyle = C.ink; ctx.beginPath(); ctx.moveTo(bx, by - 8); ctx.lineTo(bx + 7, by + 5); ctx.lineTo(bx - 7, by + 5); ctx.fill();
+      txt('BM', bx + 10, by + 4, { color: C.ink, weight: 500 });
+      S.gcps.forEach((g, i) => {
+        const [x, y] = px(g.x, g.y), s = 7;
+        ctx.fillStyle = C.panel; ctx.fillRect(x - s, y - s, 2 * s, 2 * s);
+        ctx.fillStyle = C.ink; ctx.fillRect(x - s, y - s, s, s); ctx.fillRect(x, y, s, s);
+        ctx.strokeStyle = C.ink; ctx.lineWidth = 1; ctx.strokeRect(x - s, y - s, 2 * s, 2 * s);
+        txt('G' + (i + 1), x + 10, y - 6, { color: C.ink, weight: 500 });
+      });
+      if (!S.gcps.length) txt('Click anywhere on the site to place a GCP', W / 2, H - 12, { align: 'center', color: C.accent });
+    }
+  },
+  { id: 'gcs', t: 'Ground station' },
+  { id: 'process', t: 'Processing' },
+  {
+    id: 'accuracy', t: 'Accuracy check',
+    alt: 'Chart comparing your map accuracy with the accuracy needed for different jobs.',
+    cap: 'Each bar shows how accurate a map must be for that job. Your map line has to sit inside a bar to be good enough.',
+    html: () => `<h2>How good is your map?</h2>
+<p>Surveyors don't just trust the software. They lay out a few extra targets called ${term('icp', 'checkpoints')} that are <b>not</b> used for pinning, then compare the finished map against them. The result is one number, the ${term('rmse', 'RMSE')}.</p>
+<p>Here's what your choices so far add up to. Click a box to go back and change it.</p>
+<div class="readouts"><button class="ro" data-go="flight"><span>Detail (GSD)</span><b id="r1"></b></button><button class="ro" data-go="rtk"><span>RTK</span><b id="r2"></b></button><button class="ro" data-go="gcp"><span>GCPs</span><b id="r3"></b></button><div class="ro"><span>Expected accuracy</span><b id="r4"></b></div></div>
+<ul class="warns" id="warns"></ul>
+<p class="take" id="verdict"></p>`,
+    bind() { document.querySelectorAll('[data-go]').forEach(b => b.onclick = () => go(b.dataset.go, true)); },
+    upd() {
+      const f = flight(), v = finalAcc(), ok = USES.filter(u => v <= u[1]).map(u => u[0].toLowerCase());
+      $('#r1').textContent = f.gsd.toFixed(1) + ' cm/px';
+      $('#r2').textContent = S.rtk ? 'on' : 'off';
+      $('#r3').textContent = S.gcps.length;
+      $('#r4').textContent = fmtErr(v); $('#r4').style.color = errColor(v);
+      $('#warns').innerHTML = 1.5 * f.gsd / 100 > S.err.rmse
+        ? '<li>Your limit is now <b>photo detail</b>. Fly lower to do better.</li>'
+        : '<li>Your limit is now <b>positioning</b>. Turn on RTK or spread out more GCPs.</li>';
+      $('#verdict').innerHTML = ok.length ? `Good enough for: <b>${ok.join(', ')}</b>.` : 'Not reliable for measuring anything yet. Try RTK or GCPs.';
+    },
+    draw() {
+      const v = finalAcc();
+      S.shown = S.shown == null ? v : S.shown * Math.pow(v / S.shown, .08);
+      const X = m => 90 + Math.log10(clamp(m, .01, 10) / .01) / 3 * 620;
+      ctx.lineWidth = 1;
+      for (const [m, l] of [[.01, '1 cm'], [.1, '10 cm'], [1, '1 m'], [10, '10 m']]) {
+        ctx.strokeStyle = C.grid; line(X(m), 80, X(m), 380); txt(l, X(m), 400, { align: 'center' });
+      }
+      ctx.strokeStyle = C.line; line(X(.01), 380, X(10), 380);
+      txt('← more accurate', X(.01), 425); txt('less accurate →', X(10), 425, { align: 'right' });
+      USES.forEach(([name, th], i) => {
+        const y = 125 + i * 62, pass = v <= th, w = X(th) - X(.01);
+        ctx.fillStyle = pass ? C.ok : C.muted; ctx.globalAlpha = pass ? .2 : .08; ctx.fillRect(X(.01), y, w, 28);
+        ctx.globalAlpha = 1; ctx.strokeStyle = pass ? C.ok : C.line; ctx.strokeRect(X(.01), y, w, 28);
+        txt(name, X(.01), y - 7, { sans: true, size: 13, color: C.ink, weight: 500 });
+        txt('needs ≤ ' + fmtErr(th), X(th) + 8, y + 18, { color: pass ? C.ok : C.muted });
+      });
+      const mx = X(S.shown);
+      ctx.strokeStyle = C.accent; ctx.lineWidth = 2; line(mx, 78, mx, 380);
+      txt('YOUR MAP ≈ ' + fmtErr(v), clamp(mx, 150, 650), 66, { align: 'center', color: C.accent, size: 13, weight: 500 });
+    }
+  },
+  { id: 'analysis', t: 'Analysis' }
+];
+const READY = STEPS.filter(s => s.html);
+
+/* ---------- navigation ---------- */
+let cur;
+$('#steps').innerHTML = STEPS.map((s, i) =>
+  `<button class="pill" data-id="${s.id}" ${s.html ? '' : 'disabled title="Coming soon"'}><span class="n">${String(i + 1).padStart(2, '0')}</span>${s.t}</button>`).join('');
+$('#steps').onclick = e => { const b = e.target.closest('.pill'); if (b && !b.disabled) go(b.dataset.id); };
+
+function go(id, scroll) {
+  cur = READY.find(s => s.id === id) || READY[0];
+  history.replaceState(null, '', '#' + cur.id);
+  $('#text').innerHTML = `<p class="eyebrow">Topic ${STEPS.indexOf(cur) + 1} of ${STEPS.length} · ${cur.t}</p>` + cur.html();
+  document.querySelectorAll('.term').forEach(el => { el.tabIndex = 0; el.dataset.def = G[el.dataset.t]; });
+  cur.bind?.(); cur.upd();
+  $('#caption').textContent = cur.cap;
+  cv.setAttribute('aria-label', cur.alt);
+  cv.classList.toggle('drag', !!cur.drag);
+  document.querySelectorAll('.pill').forEach(p => p.dataset.id === cur.id ? p.setAttribute('aria-current', 'step') : p.removeAttribute('aria-current'));
+  const i = READY.indexOf(cur);
+  $('#prev').disabled = i === 0; $('#next').disabled = i === READY.length - 1;
+  $('#pos').textContent = `${i + 1} / ${READY.length} built`;
+  document.querySelector('.pill[aria-current]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  if (scroll) scrollTo({ top: 0, behavior: RM ? 'auto' : 'smooth' });
+}
+$('#prev').onclick = () => go(READY[READY.indexOf(cur) - 1].id, true);
+$('#next').onclick = () => go(READY[READY.indexOf(cur) + 1].id, true);
+
+/* ---------- canvas plumbing ---------- */
+function fit() {
+  const r = cv.getBoundingClientRect(), d = devicePixelRatio || 1;
+  cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d);
+  ctx.setTransform(cv.width / W, 0, 0, cv.height / H, 0, 0);
+}
+const pos = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * W / r.width, (e.clientY - r.top) * H / r.height]; };
+let dragI = -1;
+cv.addEventListener('pointerdown', e => { if (!cur.down) return; dragI = cur.down(...pos(e)); if (dragI >= 0) cv.setPointerCapture(e.pointerId); });
+cv.addEventListener('pointermove', e => {
+  if (!cur.down) return;
+  if (dragI >= 0) cur.move(...pos(e), dragI);
+  else cv.style.cursor = cur.hit(...pos(e)) >= 0 ? 'grab' : '';
+});
+cv.addEventListener('pointerup', () => dragI = -1);
+cv.addEventListener('pointercancel', () => dragI = -1);
+cv.addEventListener('dblclick', e => cur.dbl?.(...pos(e)));
+
+function frame(t) { ctx.clearRect(0, 0, W, H); cur.draw(t); requestAnimationFrame(frame); }
+
+readColors();
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readColors);
+new ResizeObserver(fit).observe(cv);
+errField();
+go(location.hash.slice(1));
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
